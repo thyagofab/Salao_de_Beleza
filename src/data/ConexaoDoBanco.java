@@ -12,6 +12,7 @@ public class ConexaoDoBanco {
     
     ConexaoDoBanco(){
         try{
+
             this.conexao = DriverManager.getConnection("jdbc:sqlite:src/data/banco.db"); //Inicializando o banco de dados , caso não exista esse arquivo ai automaticamente é criado peloa SQLlite
 
             this.statement = conexao.createStatement(); //Inicializando o Statement que vai servi para executar os comandos SQL
