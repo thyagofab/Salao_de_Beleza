@@ -77,5 +77,15 @@ public abstract class Usuario {
         this.senha = senha;
     }
 
+    @Override
+    public String toString() {
+        return String.format("ID: %d | Nome: %s | CPF: %s | Telefone: %s | Email: %s",
+                this.idUsuario,
+                this.nome,
+                this.cpf,
+                this.telefone,
+                this.email
+        );
+    }
     
 }
