@@ -19,10 +19,13 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         int opcao = 0;
 
-        while (opcao != 3) {
+        while (opcao != 6) {
             System.out.println("1. Adicionar Procedimento");
             System.out.println("2. Consultar Procedimento");
-            System.out.println("3. Sair");
+            System.out.println("3. Atualizar Procedimento");
+            System.out.println("4. Deletar Procedimento");
+            System.out.println("5. Listar Procedimentos");
+            System.out.println("6. Sair");
             opcao = scanner.nextInt();
             scanner.nextLine(); 
 
@@ -34,8 +37,18 @@ public class Main {
                     procedimentoService.consultarProcedimento(scanner);
                     break;
                 case 3:
+                    procedimentoService.atualizarProcedimento(scanner);
+                    break;
+                 case 4:
+                    procedimentoService.deletarProcedimento(scanner);
+                    break;
+                case 5:
+                    procedimentoService.listarProcedimentos();
+                    break;
+                case 6:
                     System.out.println("Saindo...");
                     return;
+                
                 default:
                     System.out.println("Opção inválida. Tente novamente.");
             }
