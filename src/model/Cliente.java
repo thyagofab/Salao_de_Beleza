@@ -2,16 +2,19 @@ package model;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.time.format.DateTimeFormatter;
 
-public class Cliente {
+public class Cliente extends Usuario {
     LocalDate dataNascimento;
     String endereco;
     int quantidadedeAgendamentos;
     List<String> preferenciasDeHorarios;
     LocalDate ultimaVisita;
-    
-    public Cliente(LocalDate dataNascimento, String endereco, int quantidadedeAgendamentos,
+
+    public Cliente(int idUsuario, String nome, String cpf, String telefone, String email, String senha,
+            LocalDate dataNascimento, String endereco, int quantidadedeAgendamentos,
             List<String> preferenciasDeHorarios, LocalDate ultimaVisita) {
+        super(idUsuario, nome, cpf, telefone, email, senha);
         this.dataNascimento = dataNascimento;
         this.endereco = endereco;
         this.quantidadedeAgendamentos = quantidadedeAgendamentos;
@@ -61,15 +64,12 @@ public class Cliente {
 
     @Override
     public String toString() {
-        return "Dados Do Cliente: \n Data De Nascimento: " + dataNascimento + "\nEndereço: " + endereco + "\nQuantidade de Agendamento: "
-                + quantidadedeAgendamentos + "\nPreferência de Horarios" + preferenciasDeHorarios + "\nÚltima Visita: "
-                + ultimaVisita;
+        return super.toString()
+                + "\n| Data De Nascimento: " + this.dataNascimento
+                + "\n| Endereço: " + this.endereco
+                + "\n| Quantidade De Agendamentos: " + this.quantidadedeAgendamentos
+                + "\n| Preferência de Horários: " + this.preferenciasDeHorarios
+                + "\n| Última Visita: " + (this.ultimaVisita!= null? this.getUltimaVisita().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")): "Nenhuma");
     }
 
-
-    
-
-
-    
-    
 }
