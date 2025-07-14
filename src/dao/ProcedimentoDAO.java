@@ -12,7 +12,7 @@ import model.Procedimento;
 
 public class ProcedimentoDAO {
     
-    public boolean salvar(Procedimento procedimento) {
+    public void salvar(Procedimento procedimento) {
         String sql = "INSERT INTO procedimento (nome, descricao, preco) VALUES (?, ?, ?)";
 
         try (Connection conn = ConexaoDoBanco.criarConexao();
@@ -22,11 +22,11 @@ public class ProcedimentoDAO {
             pt.setString(2, procedimento.getDescricao());
             pt.setDouble(3, procedimento.getPreco());
 
-            return pt.executeUpdate() > 0;
+            pt.executeUpdate();
 
         } catch (SQLException e) {
             System.err.println("Erro ao salvar procedimento: " + e.getMessage());
-            return false;
+        
         }
     }
 
@@ -101,4 +101,5 @@ public class ProcedimentoDAO {
             return false;
         }
     }
+
 }

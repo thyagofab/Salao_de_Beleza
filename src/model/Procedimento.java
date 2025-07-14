@@ -36,6 +36,6 @@ public class Procedimento {
     }
 
     public String toString(){
-        return String.format("| Procedimento: %s \n| Descrição: %s \n| Preço: R$%.2f", nome, descricao, preco);
+        return "Nome do Procedimento: " + nome + "\nDescrição: " + descricao + "Preço: R$" + preco;
     }    
 }
