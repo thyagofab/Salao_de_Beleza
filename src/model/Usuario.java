@@ -79,7 +79,7 @@ public abstract class Usuario {
 
     @Override
     public String toString() {
-        return String.format("ID: %d | Nome: %s | CPF: %s | Telefone: %s | Email: %s",
+        return String.format("ID: %d \n| Nome: %s \n| CPF: %s \n| Telefone: %s \n| Email: %s",
                 this.idUsuario,
                 this.nome,
                 this.cpf,
