@@ -58,6 +58,59 @@ public class Entradas {
         }
     }
 
+    public static double lerNumeroDouble(Scanner sc, String texto) {
+        String entrada;
+
+        while (true) {
+            System.out.print(texto + ": ");
+            entrada = sc.nextLine().trim();
+
+            if (entrada.isEmpty()) {
+                System.out.println("ERRO: A entrada não pode ser vazia. Tente novamente.");
+                continue; 
+            }
+
+            if (entrada.matches("\\d*[.,]?\\d+")) {
+                try {
+                    String entradaNormalizada = entrada.replace(',', '.');
+                    return Double.parseDouble(entradaNormalizada);
+
+                } catch (NumberFormatException e) {
+                    System.out.println("ERRO: O número digitado é inválido. Tente novamente.");
+                }
+
+            } else {
+                System.out.println("ERRO: Este campo deve conter apenas números decimais (use . ou , para separar decimais). Tente novamente.");
+            }
+        }
+    }
+
+    public static String lerSenha(Scanner sc, String texto) {
+        String entrada;
+
+        while (true) {
+            System.out.print(texto + ": ");
+            entrada = sc.nextLine().trim();
+
+            if (entrada.isEmpty()) {
+                System.out.println("ERRO: A senha não pode ser vazia. Tente novamente.");
+                continue;
+            }
+
+            if (entrada.length() < 6) {
+                System.out.println("ERRO: A senha deve ter pelo menos 6 caracteres. Tente novamente.");
+                continue;
+            }
+
+            if (entrada.trim().isEmpty()) {
+                System.out.println("ERRO: A senha não pode conter apenas espaços. Tente novamente.");
+                continue;
+            }
+
+            return entrada;
+        }
+    }
+
     public static boolean validarEmail(String email) {
         if (email == null || email.isEmpty()) {
             return false;
