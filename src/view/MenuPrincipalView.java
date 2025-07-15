@@ -4,16 +4,19 @@ import java.util.Scanner;
 
 import service.ClienteService;
 import service.ProcedimentoService;
+import service.CabeleireiroService;
 
 public class MenuPrincipalView {
     private Scanner scanner;
     private ClienteService clienteService;
     private ProcedimentoService procedimentoService;
+    private CabeleireiroService cabeleireiroService;
 
     public MenuPrincipalView() {
         this.scanner = new Scanner(System.in);
         this.clienteService = new ClienteService();
         this.procedimentoService = new ProcedimentoService();
+        this.cabeleireiroService = new CabeleireiroService();
     }
 
     public void exibirMenuPrincipal() {
@@ -35,7 +38,8 @@ public class MenuPrincipalView {
                     clienteView.MenuClientes();
                     break;
                 case 2:
-                    System.out.println("Módulo de Cabeleireiros ainda não implementado.");
+                    CabeleireiroView cabeleireiroView = new CabeleireiroView(scanner, cabeleireiroService);
+                    cabeleireiroView.menuCabeleireiro();
                     break;
                 case 3:
                     ProcedimentoView procedimentoView = new ProcedimentoView(scanner, procedimentoService);

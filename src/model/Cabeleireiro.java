@@ -3,9 +3,8 @@ package model;
 import java.time.LocalTime;
 import java.util.List;
 
-// classe com os atributos
 
-public class Cabeleireiro {
+public class Cabeleireiro extends Usuario{
     private List<String> especialidades;
     private double mediaDeAvaliacoes;
     private int totalDeAvaliacoes;
@@ -13,10 +12,11 @@ public class Cabeleireiro {
     private List<LocalTime> horariosDisponiveis;
     private String tempoDeExperiencia;
 
-    // criacao do construtor
 
-    public Cabeleireiro(List<String> especialidades, double mediaDeAvaliacoes, int totalDeAvaliacoes,
+    public Cabeleireiro(int idUsuario, String nome, String cpf, String telefone, String email, String senha,
+                        List<String> especialidades, double mediaDeAvaliacoes, int totalDeAvaliacoes,
                         List<String> diasDisponiveis, List<LocalTime> horariosDisponiveis, String tempoDeExperiencia){
+        super(idUsuario, nome, cpf, telefone, email, senha);                 
         this.especialidades = especialidades;
         this.mediaDeAvaliacoes = mediaDeAvaliacoes;
         this.totalDeAvaliacoes = totalDeAvaliacoes;
@@ -24,8 +24,6 @@ public class Cabeleireiro {
         this.horariosDisponiveis = horariosDisponiveis;
         this.tempoDeExperiencia = tempoDeExperiencia;
     }
-
-    // gets e sets
 
     public List<String> getEspecialidades(){
         return especialidades;
@@ -74,8 +72,6 @@ public class Cabeleireiro {
     public void setTempoDeExperiencia(String tempoDeExperiencia){
         this.tempoDeExperiencia = tempoDeExperiencia;
     }
-
-    // toString
     
     @Override
     public String toString(){
