@@ -23,7 +23,7 @@ public class CabeleireiroView {
         int opcao = 0;
 
         while (opcao != 6) {
-            System.out.println("\nMenu Cabeleireiro");
+            System.out.println("\n----Menu Cabeleireiro----");
             System.out.println("1 - Adicionar Cabeleireiro");
             System.out.println("2 - Consultar Cabeleireiro");
             System.out.println("3 - Atualizar Cabeleireiro");

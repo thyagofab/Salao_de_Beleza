@@ -3,7 +3,6 @@ package model;
 import java.time.LocalTime;
 import java.util.List;
 
-// classe com os atributos
 
 public class Cabeleireiro extends Usuario{
     private List<String> especialidades;
@@ -13,7 +12,6 @@ public class Cabeleireiro extends Usuario{
     private List<LocalTime> horariosDisponiveis;
     private String tempoDeExperiencia;
 
-    // criacao do construtor
 
     public Cabeleireiro(int idUsuario, String nome, String cpf, String telefone, String email, String senha,
                         List<String> especialidades, double mediaDeAvaliacoes, int totalDeAvaliacoes,
@@ -26,8 +24,6 @@ public class Cabeleireiro extends Usuario{
         this.horariosDisponiveis = horariosDisponiveis;
         this.tempoDeExperiencia = tempoDeExperiencia;
     }
-
-    // gets e sets
 
     public List<String> getEspecialidades(){
         return especialidades;
@@ -76,8 +72,6 @@ public class Cabeleireiro extends Usuario{
     public void setTempoDeExperiencia(String tempoDeExperiencia){
         this.tempoDeExperiencia = tempoDeExperiencia;
     }
-
-    // toString
     
     @Override
     public String toString(){
