@@ -13,7 +13,7 @@ public class ProcedimentoService {
         return procedimentoDAO.salvar(procedimento);
     }
 
-    public Procedimento buscarProcedimento(int id){
+    public Procedimento consultarProcedimento(int id){
         return procedimentoDAO.buscarPorId(id);
     }
 
