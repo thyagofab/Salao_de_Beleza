@@ -22,6 +22,20 @@ public class Cliente extends Usuario {
         this.ultimaVisita = ultimaVisita;
     }
 
+    public Boolean verificarAnivesario(LocalDate dataAtual) {
+        if (this.dataNascimento == null) {
+            return false;
+        }
+
+        int mesNascimento = this.dataNascimento.getMonthValue();
+        int diaNascimento = this.dataNascimento.getDayOfMonth();
+
+        int mesAtual = dataAtual.getMonthValue();
+        int diaAtual = dataAtual.getDayOfMonth();
+
+        return (mesNascimento == mesAtual) && (diaNascimento == diaAtual);
+    }
+
     public LocalDate getDataNascimento() {
         return dataNascimento;
     }
@@ -69,7 +83,7 @@ public class Cliente extends Usuario {
                 + "\n| Endereço: " + this.endereco
                 + "\n| Quantidade De Agendamentos: " + this.quantidadedeAgendamentos
                 + "\n| Preferência de Horários: " + this.preferenciasDeHorarios
-                + "\n| Última Visita: " + (this.ultimaVisita!= null? this.getUltimaVisita().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")): "Nenhuma");
+                + "\n| Última Visita: " + (this.ultimaVisita != null ? this.getUltimaVisita().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")): "Nenhuma");
     }
 
 }

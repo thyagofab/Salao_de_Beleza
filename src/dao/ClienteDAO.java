@@ -10,123 +10,237 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+import data.ConexaoDoBanco;
 import model.Cliente;
 
 public class ClienteDAO {
 
-    public void criaCliente(Cliente cliente, Connection conexao) throws SQLException {
-        String instrucaoSql = "INSERT INTO clientes(usuario_id, data_nascimento, endereco, quantidade_agendamentos, ultima_visita, preferencias_horarios) VALUES (?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement instrucaoPreparadaDoSql = conexao.prepareStatement(instrucaoSql)) {
-            instrucaoPreparadaDoSql.setInt(1, cliente.getIdUsuario());
-            instrucaoPreparadaDoSql.setString(2, cliente.getDataNascimento().toString());
-            instrucaoPreparadaDoSql.setString(3, cliente.getEndereco());
-            instrucaoPreparadaDoSql.setInt(4, cliente.getQuantidadedeAgendamentos());
+    private UsuarioDAO usuarioDAO = new UsuarioDAO();
 
-            if (cliente.getUltimaVisita() != null) {
-                instrucaoPreparadaDoSql.setString(5, cliente.getUltimaVisita().toString());
-            } else {
-                instrucaoPreparadaDoSql.setNull(5, Types.VARCHAR);
+    public boolean salvarDadosClienteNoBanco(Cliente cliente) {
+        Connection conexao = null;
+        String instrucaoSql = "INSERT INTO clientes(usuario_id, data_nascimento, endereco, quantidade_agendamentos, ultima_visita, preferencias_horarios) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try {
+            conexao = ConexaoDoBanco.criarConexao();
+            conexao.setAutoCommit(false);
+
+            int idGerado = usuarioDAO.criarUsuarioCliente(cliente, conexao);
+            cliente.setIdUsuario(idGerado);
+
+            try (PreparedStatement instrucaoPreparada = conexao.prepareStatement(instrucaoSql)) {
+                instrucaoPreparada.setInt(1, cliente.getIdUsuario());
+                instrucaoPreparada.setString(2, cliente.getDataNascimento().toString());
+                instrucaoPreparada.setString(3, cliente.getEndereco());
+                instrucaoPreparada.setInt(4, 0);
+                instrucaoPreparada.setNull(5, Types.DATE);
+
+                String preferenciasDeHorarios = String.join(",", cliente.getPreferenciasDeHorarios());
+                instrucaoPreparada.setString(6, preferenciasDeHorarios);
+
+                int linhaAlterada = instrucaoPreparada.executeUpdate();
+                if (linhaAlterada == 0) {
+                    throw new SQLException("Falha ao salvar dados complementares do cliente!");
+                }
             }
 
-            String preferencias = String.join(",", cliente.getPreferenciasDeHorarios());
-            instrucaoPreparadaDoSql.setString(6, preferencias);
-            instrucaoPreparadaDoSql.executeUpdate();
+            conexao.commit();
+            return true;
+
+        } catch (SQLException e) {
+            System.err.println("Erro na transação ao salvar cliente: " + e.getMessage());
+            try {
+                if (conexao != null) {
+                    conexao.rollback();
+                }
+            } catch (SQLException ex) {
+                System.err.println("ERRO ROLLBACK: " + ex.getMessage());
+            }
+            return false;
+        } finally {
+            try {
+                if (conexao != null) {
+                    conexao.close();
+                }
+            } catch (SQLException e) {
+                System.err.println("Erro ao fechar a conexão: " + e.getMessage());
+            }
         }
     }
 
-
-    public Cliente buscaPorId(int idUsuario, Connection conexao) throws SQLException {
+    public Cliente buscaPorId(int idUsuario) {
+        Connection conexao = null;
         String instrucaoSql = "SELECT u.*, c.data_nascimento, c.endereco, c.quantidade_agendamentos, c.ultima_visita, c.preferencias_horarios "
-                + "FROM usuarios u JOIN clientes c ON u.idUsuario = c.usuario_id WHERE u.idUsuario = ?";
+        + "FROM usuarios u JOIN clientes c ON u.idUsuario = c.usuario_id WHERE u.idUsuario = ?";
 
-        try (PreparedStatement instrucaoPreparada = conexao.prepareStatement(instrucaoSql)) {
-            instrucaoPreparada.setInt(1, idUsuario);
-            try (ResultSet resultado = instrucaoPreparada.executeQuery()) {
-                if (resultado.next()) {
-                    int id = resultado.getInt("idUsuario");
-                    String nome = resultado.getString("nome");
-                    String cpf = resultado.getString("cpf");
-                    String telefone = resultado.getString("telefone");
-                    String email = resultado.getString("email");
-                    String senha = resultado.getString("senha");
+        try {
+            conexao = ConexaoDoBanco.criarConexao();
+            try (PreparedStatement instrucaoPreparadaSql = conexao.prepareStatement(instrucaoSql)) {
+                instrucaoPreparadaSql.setInt(1, idUsuario);
 
-                    String dataNascimentoStr = resultado.getString("data_nascimento");
-                    LocalDate dataDeNascimento = null;
-                    if (dataNascimentoStr != null && !dataNascimentoStr.isEmpty()) {
-                        try {
-                            dataDeNascimento = LocalDate.parse(dataNascimentoStr);
-                        } catch (DateTimeParseException e) {
-                            System.err.println("Formato de data de nascimento inválido para o cliente ID " + id);
+                try (ResultSet resultado = instrucaoPreparadaSql.executeQuery()) {
+                    if (resultado.next()) {
+                        int id = resultado.getInt("idUsuario");
+                        String nome = resultado.getString("nome");
+                        String cpf = resultado.getString("cpf");
+                        String telefone = resultado.getString("telefone");
+                        String email = resultado.getString("email");
+                        String senha = resultado.getString("senha");
+
+                        String dataNascimentoStr = resultado.getString("data_nascimento");
+                        LocalDate dataDeNascimento = null;
+
+                        if (dataNascimentoStr != null && !dataNascimentoStr.isEmpty()) {
+                            try {
+                                dataDeNascimento = LocalDate.parse(dataNascimentoStr);
+                            } catch (DateTimeParseException e) {
+                                System.err.println("Formato de data de nascimento inválido");
+                            }
                         }
-                    }
 
-                    String endereco = resultado.getString("endereco");
-                    int quantidadeDeAgendamentos = resultado.getInt("quantidade_agendamentos");
+                        String endereco = resultado.getString("endereco");
+                        int quantidadeDeAgendamentos = resultado.getInt("quantidade_agendamentos");
 
-                    String ultimaVisitaStr = resultado.getString("ultima_visita");
-                    LocalDate ultimaVisita = null;
-                    if (ultimaVisitaStr != null && !ultimaVisitaStr.isEmpty()) {
-                        try {
-                            ultimaVisita = LocalDate.parse(ultimaVisitaStr);
-                        } catch (DateTimeParseException e) {
-                            System.err.println("Aviso: Formato de última visita inválido para o cliente ID " + id
-                                    + ". Valor: '" + ultimaVisitaStr + "'");
+                        String ultimaVisitaStr = resultado.getString("ultima_visita");
+                        LocalDate ultimaVisita = null;
+                        if (ultimaVisitaStr != null && !ultimaVisitaStr.isEmpty()) {
+                            try {
+                                ultimaVisita = LocalDate.parse(ultimaVisitaStr);
+                            } catch (DateTimeParseException e) {
+                                System.err.println("Formato de última visita inválido");
+                            }
                         }
-                    }
 
-                    List<String> preferencias = new ArrayList<>();
-                    String prefenciaStr = resultado.getString("preferencias_horarios");
-                    if (prefenciaStr != null && !prefenciaStr.isEmpty()) {
-                        preferencias.addAll(Arrays.asList(prefenciaStr.split(",")));
-                    }
+                        List<String> preferenciasDeHorarios = new ArrayList<>();
+                        String prefenciaStr = resultado.getString("preferencias_horarios");
+                        
+                        if (prefenciaStr != null && !prefenciaStr.isEmpty()) {
+                            preferenciasDeHorarios.addAll(Arrays.asList(prefenciaStr.split(",")));
+                        }
 
-                    return new Cliente(id, nome, cpf, telefone, email, senha, dataDeNascimento, endereco,
-                            quantidadeDeAgendamentos, preferencias, ultimaVisita);
+                        return new Cliente(id, nome, cpf, telefone, email, senha, dataDeNascimento, endereco,
+                                quantidadeDeAgendamentos, preferenciasDeHorarios, ultimaVisita);
+                    }
                 }
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                if (conexao != null)
+                    conexao.close();
+            } catch (SQLException e) {
+                System.err.println("Erro ao fechar a conexão: " + e.getMessage());
+            }
         }
-
         return null;
     }
 
-    public boolean atualizarDadosDoCliente(Cliente cliente, Connection conexao) throws SQLException {
+    public boolean atualizarDadosDoCliente(Cliente clienteParaAtualizar) {
+        Connection conexao = null;
         String instrucaoSql = "UPDATE clientes SET data_nascimento = ?, endereco = ?, preferencias_horarios = ? WHERE usuario_id = ?";
 
-        try (PreparedStatement instrucaoPreparada = conexao.prepareStatement(instrucaoSql)) {
-            instrucaoPreparada.setString(1, cliente.getDataNascimento().toString());
-            instrucaoPreparada.setString(2, cliente.getEndereco());
+        try {
+            conexao = ConexaoDoBanco.criarConexao();
+            conexao.setAutoCommit(false); 
 
-            //transformo um lista horario e uma só String, assim usando a virgula de separador da possiao da lista
-            String preferenciasDeHorarios = String.join(",", cliente.getPreferenciasDeHorarios());
+            boolean sucessoUsuario = usuarioDAO.atualizarDados(clienteParaAtualizar, conexao);
 
-            instrucaoPreparada.setString(3, preferenciasDeHorarios);
-            instrucaoPreparada.setInt(4, cliente.getIdUsuario());
+            boolean sucessoCliente = false;
 
-            return instrucaoPreparada.executeUpdate() > 0;
+            try (PreparedStatement instrucaoPreparadaSql = conexao.prepareStatement(instrucaoSql)) {
+                instrucaoPreparadaSql.setString(1, clienteParaAtualizar.getDataNascimento().toString());
+                instrucaoPreparadaSql.setString(2, clienteParaAtualizar.getEndereco());
+                String preferenciasDeHorarios = String.join(",", clienteParaAtualizar.getPreferenciasDeHorarios());
+                instrucaoPreparadaSql.setString(3, preferenciasDeHorarios);
+                instrucaoPreparadaSql.setInt(4, clienteParaAtualizar.getIdUsuario());
+
+                if (instrucaoPreparadaSql.executeUpdate() > 0) {
+                    sucessoCliente = true;
+                }
+            }
+
+            if (sucessoUsuario || sucessoCliente) {
+                conexao.commit();
+                return true;
+            } else {
+                conexao.rollback();
+                return false;
+            }
+
+        } catch (SQLException e) {
+            System.err.println("ERRO DE BANCO DE DADOS: " + e.getMessage());
+            try {
+                if (conexao != null)
+                    conexao.rollback();
+            } catch (SQLException ex) {
+                System.err.println("ERRO ROLLBACK: " + ex.getMessage());
+            }
+            return false;
+        } finally {
+            try {
+                if (conexao != null)
+                    conexao.close();
+            } catch (SQLException ex) {
+                System.err.println("Erro ao fechar a conexão: " + ex.getMessage());
+            }
         }
     }
 
+    public boolean deletarDadosDoCliente(int idCliente) {
+        Connection conexao = null;
+        String instrucaoSqlClientes = "DELETE FROM clientes WHERE usuario_id = ?";
 
-    public boolean delatarDadosDoCliente(int idUsuario, Connection conexao) throws SQLException {
-        String instrucaoSql = "DELETE FROM clientes WHERE usuario_id = ?";
+        try {
+            conexao = ConexaoDoBanco.criarConexao();
+            conexao.setAutoCommit(false); 
 
-        try (PreparedStatement instrucaoPreparada = conexao.prepareStatement(instrucaoSql)) {
-            instrucaoPreparada.setInt(1, idUsuario);
+            boolean deletarCliente = false;
+            try (PreparedStatement instrucaoPreparada = conexao.prepareStatement(instrucaoSqlClientes)) {
+                instrucaoPreparada.setInt(1, idCliente);
+                if (instrucaoPreparada.executeUpdate() > 0) {
+                    deletarCliente = true;
+                }
+            }
 
-            return instrucaoPreparada.executeUpdate() > 0;
+            boolean deletarUsuario = usuarioDAO.deletarDadosDoUsuario(idCliente, conexao);
+
+            if (deletarCliente && deletarUsuario) {
+                conexao.commit();
+                return true;
+            } else {
+                System.err.println("Falha ao deletar dados!");
+                conexao.rollback();
+                return false;
+            }
+
+        } catch (SQLException e) {
+            System.err.println("ERRO DE BANCO DE DADOS");
+            try {
+                if (conexao != null)
+                    conexao.rollback();
+            } catch (SQLException ex) {
+                System.err.println("ERRO ROLLBACK: " + ex.getMessage());
+            }
+            return false;
+        } finally {
+            try {
+                if (conexao != null)
+                    conexao.close();
+            } catch (SQLException ex) {
+                System.err.println("Erro ao fechar a conexão: " + ex.getMessage());
+            }
         }
-
     }
 
-
-    public List<Cliente> listarTodosClientes(Connection conexao) throws SQLException {
+    public List<Cliente> listarTodos() {
         List<Cliente> listaDeClientes = new ArrayList<>();
-        String instrucaoSql = "SELECT u.*, c.data_nascimento, c.endereco, c.quantidade_agendamentos, c.ultima_visita, c.preferencias_horarios " +
-        "FROM usuarios u JOIN clientes c ON u.idUsuario = c.usuario_id";
+        String instrucaoSql = "SELECT u.*, c.data_nascimento, c.endereco, c.quantidade_agendamentos, c.ultima_visita, c.preferencias_horarios "
+                + "FROM usuarios u JOIN clientes c ON u.idUsuario = c.usuario_id";
 
-        try (PreparedStatement instrucaoPreparada = conexao.prepareStatement(instrucaoSql)) {
-            ResultSet resultado = instrucaoPreparada.executeQuery();
+        try (Connection conexao = ConexaoDoBanco.criarConexao();
+                PreparedStatement instrucaoPreparadaSql = conexao.prepareStatement(instrucaoSql);
+                ResultSet resultado = instrucaoPreparadaSql.executeQuery()) {
 
             while (resultado.next()) {
                 int id = resultado.getInt("idUsuario");
@@ -146,10 +260,10 @@ public class ClienteDAO {
                 int quantidadeAgendamentos = resultado.getInt("quantidade_agendamentos");
 
                 List<String> preferenciasDeHorarios = new ArrayList<>();
-
+                
                 String preferenciasStr = resultado.getString("preferencias_horarios");
                 
-                if (preferenciasStr != null) {
+                if (preferenciasStr != null && !preferenciasStr.isEmpty()) {
                     preferenciasDeHorarios.addAll(Arrays.asList(preferenciasStr.split(",")));
                 }
 
@@ -158,12 +272,38 @@ public class ClienteDAO {
                 if (ultimaVisitaStr != null) {
                     ultimaVisita = LocalDate.parse(ultimaVisitaStr);
                 }
-                Cliente cliente = new Cliente(id, nome, cpf, telefone, email, senha, dataNascimento, endereco, quantidadeAgendamentos, preferenciasDeHorarios, ultimaVisita);
+
+                Cliente cliente = new Cliente(id, nome, cpf, telefone, email, senha, dataNascimento, endereco,
+                        quantidadeAgendamentos, preferenciasDeHorarios, ultimaVisita);
 
                 listaDeClientes.add(cliente);
             }
+        } catch (SQLException e) {
+            System.err.println("Erro ao listar clientes: " + e.getMessage());
         }
         return listaDeClientes;
+    }
+
+    public boolean atualizarUltimaVisita(int idUsuario, LocalDate dataVisita) {
+        String instrucaoSql = "UPDATE clientes SET ultima_visita = ?, quantidade_agendamentos = quantidade_agendamentos + 1 WHERE usuario_id = ?";
+
+        try (Connection conexao = ConexaoDoBanco.criarConexao()) {
+            conexao.setAutoCommit(false);
+
+            try (PreparedStatement instrucaoPreparadaSql = conexao.prepareStatement(instrucaoSql)) {
+
+                instrucaoPreparadaSql.setString(1, dataVisita.toString());
+                instrucaoPreparadaSql.setInt(2, idUsuario);
+
+                int linhasAlteradas = instrucaoPreparadaSql.executeUpdate();
+                conexao.commit();
+                return linhasAlteradas > 0;
+            }
+
+        } catch (SQLException e) {
+            System.err.println("ERRO DE BANCO DE DADOS: " + e.getMessage());
+            return false;
+        }
     }
 
 }
