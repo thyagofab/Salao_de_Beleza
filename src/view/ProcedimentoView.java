@@ -5,6 +5,7 @@ import java.util.TreeMap;
 
 import model.Procedimento;
 import service.ProcedimentoService;
+// import util.Entradas;
 
 public class ProcedimentoView {
     private Scanner sc;
@@ -26,7 +27,6 @@ public class ProcedimentoView {
             System.out.println("4. Deletar Procedimento");
             System.out.println("5. Listar Todos os Procedimentos");
             System.out.println("6. Voltar ao Menu Principal");
-            System.out.print("Escolha uma opção: ");
             
             opcao = sc.nextInt();
             sc.nextLine(); 
@@ -36,7 +36,7 @@ public class ProcedimentoView {
                     adicionarProcedimento(sc);
                     break;
                 case 2:
-                    consultarProcedimento(sc);
+                    buscarProcedimento(sc);
                     break;
                 case 3:
                     atualizarProcedimento(sc);
@@ -76,13 +76,13 @@ public class ProcedimentoView {
         }
     }
 
-    public void consultarProcedimento(Scanner sc){
+    public void buscarProcedimento(Scanner sc){
         int id;
         
         System.out.println("Digite o ID do procedimento que deseja consultar: ");
         id = sc.nextInt();
 
-        Procedimento procedimento = procedimentoService.buscarProcedimento(id);
+        Procedimento procedimento = procedimentoService.consultarProcedimento(id);
 
         if (procedimento != null) {
             System.out.println("Procedimento encontrado: ");
@@ -103,7 +103,7 @@ public class ProcedimentoView {
         id = sc.nextInt();
         sc.nextLine(); 
 
-        Procedimento procedimento = procedimentoService.buscarProcedimento(id);
+        Procedimento procedimento = procedimentoService.consultarProcedimento(id);
 
         if (procedimento != null) {
            
@@ -136,13 +136,13 @@ public class ProcedimentoView {
         System.out.println("Digite o ID do procedimento que deseja deletar: ");
         id = sc.nextInt();
 
-        Procedimento procedimento = procedimentoService.buscarProcedimento(id);
+        Procedimento procedimento = procedimentoService.consultarProcedimento(id);
 
         if (procedimento != null) {
             if (procedimentoService.deletarProcedimento(id)) {
                 System.out.println("Procedimento deletado com sucesso!");
             } else {
-                System.out.println("Erro ao deletar o procedimento.");
+                System.out.println("Erro ao deletar o procedimento com ID: " + id);
             }
 
         } else {
