@@ -18,17 +18,24 @@ public class ClienteView {
         int opcao = 0;
 
         while (opcao != 6) {
-            System.out.println("\n--- Menu Clientes ---");
-            System.out.println("1. Adicionar Cliente");
-            System.out.println("2. Consultar Cliente");
-            System.out.println("3. Atualizar Cliente");
-            System.out.println("4. Deletar Cliente");
-            System.out.println("5. Listar Todos os Clientes");
-            System.out.println("6. Voltar ao Menu Principal");
+
+            System.out.println("======== MENU DE CLIENTES ========");
+            System.out.println("| [1] BUSCAR CLIENTE POR ID      |");
+            System.out.println("| [2] ATUALIZAR DADOS DO CLIENTE |");
+            System.out.println("| [3] DELETAR CLIENTE            |");
+            System.out.println("| [4] EXIBIR LISTA DE CLIENTES   |");
+            System.out.println("| [5] AGENDAMENTOS               |");
+            System.out.println("| [6] VOLTAR AO MENU PRINCIPAL   |");
+            System.out.println("==================================");
+            System.out.print("Escolha uma opção: ");
+
+            opcao = scanner.nextInt();
+            scanner.nextLine();
 
             opcao = Entradas.lerNumero("Escolha uma opção ");
             switch (opcao) {
                 case 1:
+
                     adicionarCliente();
                     break;
                 case 2:
@@ -41,7 +48,7 @@ public class ClienteView {
                     deletarDadosCliente();
                     break;
                 case 5:
-                    exibirListaDeClientes();
+                    System.out.println("Gerenciar agendamentos não implementado ainda.");
                     break;
                 case 6:
                     System.out.println("Voltando...");
