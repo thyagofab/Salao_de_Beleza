@@ -20,13 +20,15 @@ public class ProcedimentoView {
         int opcao = 0;
 
         while (opcao != 6) {
-            System.out.println("\n--- Menu Procedimentos ---");
-            System.out.println("1. Adicionar Procedimento");
-            System.out.println("2. Consultar Procedimento");
-            System.out.println("3. Atualizar Procedimento");
-            System.out.println("4. Deletar Procedimento");
-            System.out.println("5. Listar Todos os Procedimentos");
-            System.out.println("6. Voltar ao Menu Principal");
+            System.out.println("======== MENU DE PROCEDIMENTOS ========");
+            System.out.println("| [1] ADICIONAR PROCEDIMENTO          |");
+            System.out.println("| [2] BUSCAR PROCEDIMENTO POR ID      |");
+            System.out.println("| [3] ATUALIZAR PROCEDIMENTO          |");
+            System.out.println("| [4] DELETAR PROCEDIMENTO            |");
+            System.out.println("| [5] LISTAR PROCEDIMENTOS            |");
+            System.out.println("| [6] VOLTAR AO MENU PRINCIPAL        |");
+            System.out.println("=======================================");
+            System.out.print("Escolha uma opção: ");
             
             opcao = sc.nextInt();
             sc.nextLine(); 

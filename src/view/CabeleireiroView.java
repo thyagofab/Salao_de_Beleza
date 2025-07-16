@@ -9,10 +9,13 @@ import java.util.TreeMap;
 
 import model.Cabeleireiro;
 import service.CabeleireiroService;
+import util.Entradas;
+import service.ProcedimentoService;
 
 public class CabeleireiroView {
     private Scanner sc;
     private CabeleireiroService cabeleireiroService;
+    private ProcedimentoService procedimentoService;
 
     public CabeleireiroView(Scanner sc, CabeleireiroService cabeleireiroService) {
         this.sc = sc;
@@ -21,27 +24,48 @@ public class CabeleireiroView {
 
     public void menuCabeleireiro() {
         int opcao = 0;
+        procedimentoService = new ProcedimentoService();
 
-        while (opcao != 6) {
-            System.out.println("\n----Menu Cabeleireiro----");
-            System.out.println("1 - Adicionar Cabeleireiro");
-            System.out.println("2 - Consultar Cabeleireiro");
-            System.out.println("3 - Atualizar Cabeleireiro");
-            System.out.println("4 - Deletar Cabeleireiro");
-            System.out.println("5 - Listar Todos os Cabeleireiros");
-            System.out.println("6 - Voltar ao Menu Principal");
+        while (opcao != 7) {
+            System.out.println("======== MENU DE CABELEIREIROS ========");
+            System.out.println("| [1] CONSULTAR CABELEIREIRO          |");
+            System.out.println("| [2] ATUALIZAR CABELEIREIRO          |");
+            System.out.println("| [3] DELETAR CABELEIREIRO            |");
+            System.out.println("| [4] LISTAR CABELEIREIROS            |");
+            System.out.println("| [5] GERENCIAR PROCEDIMENTOS         |");
+            System.out.println("| [6] GERENCIAR AGENDAMENTOS          |");
+            System.out.println("| [7] VOLTAR AO MENU PRINCIPAL        |");
+            System.out.println("=======================================");
             System.out.print("Escolha uma opção: ");
             opcao = sc.nextInt();
             sc.nextLine();
 
             switch (opcao) {
-                case 1: adicionarCabeleireiro(); break;
-                case 2: consultarCabeleireiro(); break;
-                case 3: atualizarCabeleireiro(); break;
-                case 4: deletarCabeleireiro(); break;
-                case 5: listarCabeleireiros(); break;
-                case 6: System.out.println("Voltando..."); break;
-                default: System.out.println("Opção inválida.");
+                case 1: 
+                    consultarCabeleireiro(); 
+                    break;
+                case 2: 
+                    atualizarCabeleireiro(); 
+                    break;
+                case 3: 
+                    deletarCabeleireiro(); 
+                    break;
+                case 4: 
+                    listarCabeleireiros(); 
+                    break;
+                case 5: 
+                    Entradas.limparTela();
+                    ProcedimentoView procedimentoView = new ProcedimentoView(sc, procedimentoService);
+                    procedimentoView.menuProcedimento();
+                    break;
+                case 6:
+                    System.out.println("Gerenciar agendamentos não implementado ainda.");
+                    break;
+                case 7:
+                    System.out.println("Voltando ao menu principal...");
+                    break;
+                default: 
+                    System.out.println("Opção inválida.");
             }
         }
     }
