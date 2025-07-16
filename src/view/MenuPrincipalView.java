@@ -5,6 +5,7 @@ import service.ClienteService;
 import service.CabeleireiroService;
 import util.Entradas;
 
+
 public class MenuPrincipalView {
 
     private Scanner scanner;
@@ -32,12 +33,14 @@ public class MenuPrincipalView {
             scanner.nextLine(); 
             switch (opcao) {
                 case 1:
+                    ClienteView clienteView = new ClienteView(clienteService);
                     System.out.println("realizar login não implementado ainda.");
                     break;
                 case 2:
                     Entradas.limparTela();
                     ClienteView clienteView = new ClienteView(scanner, clienteService);
                     clienteView.adicionarCliente(scanner);
+
                     clienteView.MenuClientes();
                     break;
                 case 3:

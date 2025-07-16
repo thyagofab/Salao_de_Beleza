@@ -1,21 +1,16 @@
 package view;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 import model.Cliente;
 import service.ClienteService;
+import util.Entradas;
 
 public class ClienteView {
-    private Scanner scanner;
     private ClienteService clienteService;
 
-    public ClienteView(Scanner scanner, ClienteService clienteService) {
-        this.scanner = scanner;
+    public ClienteView(ClienteService clienteService) {
         this.clienteService = clienteService;
     }
 
@@ -23,6 +18,7 @@ public class ClienteView {
         int opcao = 0;
 
         while (opcao != 6) {
+
             System.out.println("======== MENU DE CLIENTES ========");
             System.out.println("| [1] BUSCAR CLIENTE POR ID      |");
             System.out.println("| [2] ATUALIZAR DADOS DO CLIENTE |");
@@ -36,18 +32,20 @@ public class ClienteView {
             opcao = scanner.nextInt();
             scanner.nextLine();
 
+            opcao = Entradas.lerNumero("Escolha uma opção ");
             switch (opcao) {
                 case 1:
-                    buscarPorId(scanner);
+
+                    adicionarCliente();
                     break;
                 case 2:
-                    atualizarDadosDoCliente(scanner);
+                    buscarPorId();
                     break;
                 case 3:
-                    deletarDadosCliente(scanner);
+                    atualizarDadosDoCliente();
                     break;
                 case 4:
-                    exibirListaDeClientes();
+                    deletarDadosCliente();
                     break;
                 case 5:
                     System.out.println("Gerenciar agendamentos não implementado ainda.");
@@ -61,40 +59,31 @@ public class ClienteView {
         }
     }
 
-    public void adicionarCliente(Scanner scanner) {
-        System.out.print("Digite o novo nome: ");
-        String nome = scanner.nextLine();
+    public void adicionarCliente() {
 
-        System.out.print("Digite o novo CPF: ");
-        String cpf = scanner.nextLine();
+        System.out.print("Digite o nome: ");
+        String nome = Entradas.validarNome();
 
-        System.out.print("Digite o novo telefone: ");
-        String telefone = scanner.nextLine();
+        System.out.print("Digite o CPF (apenas números): ");
+        String cpf = Entradas.validarCPF();
 
-        System.out.print("Digite o novo email: ");
-        String email = scanner.nextLine();
+        System.out.print("Digite o telefone com DDD (10 ou 11 dígitos): ");
+        String telefone = Entradas.validarTelefone();
 
-        System.out.print("Digite a novo senha: ");
-        String senha = scanner.nextLine();
+        System.out.print("Digite o email: ");
+        String email = Entradas.validarEmail();
 
-        System.out.print("Digite o novo endereço: ");
-        String endereco = scanner.nextLine();
+        System.out.print("Digite senha: ");
+        String senha = Entradas.validarSenha();
+
+        System.out.print("Digite endereço: ");
+        String endereco = Entradas.validarEndereco();
 
         System.out.print("Data de nascimento (dd/MM/yyyy): ");
-        String dataNascimentoStr = scanner.nextLine();
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate dataNascimento = LocalDate.parse(dataNascimentoStr, formatter);
-
-        System.out.print("Preferências de horários (ex: Manhã,Tarde): ");
-        String preferenciasStr = scanner.nextLine();
-        List<String> preferencias = new ArrayList<>();
-        if (!preferenciasStr.isEmpty()) {
-            preferencias.addAll(Arrays.asList(preferenciasStr.split(",")));
-        }
+        LocalDate dataNascimento = Entradas.validarDataDeNascimento();
 
         Cliente clienteNovo = new Cliente(0, nome, cpf, telefone, email, senha, dataNascimento, endereco, 0,
-                preferencias, null);
+             null);
 
         if (this.clienteService.criarCliente(clienteNovo)) {
             System.out.println("Cliente criado com sucesso!");
@@ -103,12 +92,9 @@ public class ClienteView {
         }
     }
 
-    public void buscarPorId(Scanner scanner) {
-        int idCliente;
+    public void buscarPorId() {
 
-        System.out.printf("Digite o ID do Cliente que deseja consultar: ");
-        idCliente = scanner.nextInt();
-        scanner.nextLine();
+        int idCliente = Entradas.lerNumero("Digite o ID do Cliente que deseja consultar: ");
 
         Cliente clienteEncontrado = clienteService.consultarCliente(idCliente);
 
@@ -120,41 +106,36 @@ public class ClienteView {
 
     }
 
-    public void atualizarDadosDoCliente(Scanner scanner) {
-        System.out.print("Digite o ID do Cliente que deseja Atualizar:  ");
-        int id = scanner.nextInt();
-        scanner.nextLine();
+    public void atualizarDadosDoCliente() {
+        int idCliente = Entradas.lerNumero("Digite o ID do Cliente que deseja atualizar os dados: ");
 
-        Cliente clienteExistente = clienteService.consultarCliente(id);
+        Cliente clienteExistente = clienteService.consultarCliente(idCliente);
 
         if (clienteExistente != null) {
 
+            System.out.println("Digite os novos Dados: ");
+
             System.out.print("Digite o novo nome: ");
-            String nome = scanner.nextLine();
+            String nome = Entradas.validarNome();
 
             System.out.print("Digite o novo CPF: ");
-            String cpf = scanner.nextLine();
+            String cpf = Entradas.validarCPF();
 
             System.out.print("Digite o novo telefone: ");
-            String telefone = scanner.nextLine();
+            String telefone = Entradas.validarTelefone();
 
             System.out.print("Digite o novo email: ");
-            String email = scanner.nextLine();
+            String email = Entradas.validarEmail();
 
             System.out.print("Digite a nova senha: ");
-            String senha = scanner.nextLine();
+            String senha = Entradas.validarSenha();
 
             System.out.print("Digite o novo endereço: ");
-            String endereco = scanner.nextLine();
+            String endereco = Entradas.validarEndereco();
 
             System.out.print("Digite a nova Data de nascimento (dd/MM/yyyy): ");
-            String dataNascimentoStr = scanner.nextLine();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            LocalDate dataNascimento = LocalDate.parse(dataNascimentoStr, formatter);
+            LocalDate dataNascimento = Entradas.validarDataDeNascimento();
 
-            System.out.print("Digite as novas Preferências de horários (ex: Manhã,Tarde): ");
-            String preferenciasStr = scanner.nextLine();
-            List<String> preferencias = new ArrayList<>(Arrays.asList(preferenciasStr.split(",")));
 
             clienteExistente.setNome(nome);
             clienteExistente.setCpf(cpf);
@@ -163,7 +144,6 @@ public class ClienteView {
             clienteExistente.setSenha(senha);
             clienteExistente.setEndereco(endereco);
             clienteExistente.setDataNascimento(dataNascimento);
-            clienteExistente.setPreferenciasDeHorarios(preferencias);
 
             if (clienteService.atualizarCliente(clienteExistente)) {
                 System.out.println("Cliente atualizado com sucesso!");
@@ -177,10 +157,8 @@ public class ClienteView {
 
     }
 
-    public void deletarDadosCliente(Scanner scanner) {
-        System.out.print("Digite o ID do Cliente que deseja Atualizar:  ");
-        int idCliente = scanner.nextInt();
-        scanner.nextLine();
+    public void deletarDadosCliente() {
+        int idCliente = Entradas.lerNumero("Digite o ID do Cliente que deseja consultar: ");
 
         Cliente clienteExistente = clienteService.consultarCliente(idCliente);
 
@@ -210,14 +188,13 @@ public class ClienteView {
         }
     }
 
-    public boolean atualizarData(int idCliente){
+    public boolean atualizarData(int idCliente) {
         return clienteService.registrarUltimaVisitaCliente(idCliente);
 
     }
-    
-    public String exibirDadosCliente(){
+
+    public String exibirDadosCliente() {
         return clienteService.visualizarDadosCliente();
     }
-
 
 }
