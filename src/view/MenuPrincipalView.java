@@ -6,6 +6,7 @@ import service.ClienteService;
 import service.ProcedimentoService;
 import service.CabeleireiroService;
 
+
 public class MenuPrincipalView {
     private Scanner scanner;
     private ClienteService clienteService;
@@ -34,7 +35,7 @@ public class MenuPrincipalView {
             scanner.nextLine(); 
             switch (opcao) {
                 case 1:
-                    ClienteView clienteView = new ClienteView(scanner, clienteService);
+                    ClienteView clienteView = new ClienteView(clienteService);
                     clienteView.MenuClientes();
                     break;
                 case 2:

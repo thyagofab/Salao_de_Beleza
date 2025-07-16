@@ -29,8 +29,7 @@ public class ConexaoDoBanco {
                           + "usuario_id INTEGER PRIMARY KEY,"
                           + "data_nascimento TEXT,"
                           + "endereco TEXT,"
-                          + "quantidade_agendamentos INTEGER DEFAULT 0,"
-                          + "preferencias_horarios TEXT," 
+                          + "quantidade_agendamentos INTEGER DEFAULT 0," 
                           + "ultima_visita TEXT,"
                           + "FOREIGN KEY (usuario_id) REFERENCES usuarios(idUsuario)"
                           + ");";

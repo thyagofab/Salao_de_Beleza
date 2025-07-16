@@ -1,24 +1,20 @@
 package model;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.time.format.DateTimeFormatter;
 
 public class Cliente extends Usuario {
     LocalDate dataNascimento;
     String endereco;
     int quantidadedeAgendamentos;
-    List<String> preferenciasDeHorarios;
     LocalDate ultimaVisita;
 
     public Cliente(int idUsuario, String nome, String cpf, String telefone, String email, String senha,
-            LocalDate dataNascimento, String endereco, int quantidadedeAgendamentos,
-            List<String> preferenciasDeHorarios, LocalDate ultimaVisita) {
+            LocalDate dataNascimento, String endereco, int quantidadedeAgendamentos, LocalDate ultimaVisita) {
         super(idUsuario, nome, cpf, telefone, email, senha);
         this.dataNascimento = dataNascimento;
         this.endereco = endereco;
         this.quantidadedeAgendamentos = quantidadedeAgendamentos;
-        this.preferenciasDeHorarios = preferenciasDeHorarios;
         this.ultimaVisita = ultimaVisita;
     }
 
@@ -48,10 +44,6 @@ public class Cliente extends Usuario {
         return quantidadedeAgendamentos;
     }
 
-    public List<String> getPreferenciasDeHorarios() {
-        return preferenciasDeHorarios;
-    }
-
     public LocalDate getUltimaVisita() {
         return ultimaVisita;
     }
@@ -68,10 +60,6 @@ public class Cliente extends Usuario {
         this.quantidadedeAgendamentos = quantidadedeAgendamentos;
     }
 
-    public void setPreferenciasDeHorarios(List<String> preferenciasDeHorarios) {
-        this.preferenciasDeHorarios = preferenciasDeHorarios;
-    }
-
     public void setUltimaVisita(LocalDate ultimaVisita) {
         this.ultimaVisita = ultimaVisita;
     }
@@ -82,7 +70,6 @@ public class Cliente extends Usuario {
                 + "\n| Data De Nascimento: " + this.dataNascimento
                 + "\n| Endereço: " + this.endereco
                 + "\n| Quantidade De Agendamentos: " + this.quantidadedeAgendamentos
-                + "\n| Preferência de Horários: " + this.preferenciasDeHorarios
                 + "\n| Última Visita: " + (this.ultimaVisita != null ? this.getUltimaVisita().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")): "Nenhuma");
     }
 

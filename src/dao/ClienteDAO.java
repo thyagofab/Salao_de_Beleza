@@ -8,7 +8,6 @@ import java.sql.Types;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import data.ConexaoDoBanco;
 import model.Cliente;
@@ -19,7 +18,7 @@ public class ClienteDAO {
 
     public boolean salvarDadosClienteNoBanco(Cliente cliente) {
         Connection conexao = null;
-        String instrucaoSql = "INSERT INTO clientes(usuario_id, data_nascimento, endereco, quantidade_agendamentos, ultima_visita, preferencias_horarios) VALUES (?, ?, ?, ?, ?, ?)";
+        String instrucaoSql = "INSERT INTO clientes(usuario_id, data_nascimento, endereco, quantidade_agendamentos, ultima_visita) VALUES (?, ?, ?, ?, ?)";
 
         try {
             conexao = ConexaoDoBanco.criarConexao();
@@ -34,9 +33,6 @@ public class ClienteDAO {
                 instrucaoPreparada.setString(3, cliente.getEndereco());
                 instrucaoPreparada.setInt(4, 0);
                 instrucaoPreparada.setNull(5, Types.DATE);
-
-                String preferenciasDeHorarios = String.join(",", cliente.getPreferenciasDeHorarios());
-                instrucaoPreparada.setString(6, preferenciasDeHorarios);
 
                 int linhaAlterada = instrucaoPreparada.executeUpdate();
                 if (linhaAlterada == 0) {
@@ -70,8 +66,8 @@ public class ClienteDAO {
 
     public Cliente buscaPorId(int idUsuario) {
         Connection conexao = null;
-        String instrucaoSql = "SELECT u.*, c.data_nascimento, c.endereco, c.quantidade_agendamentos, c.ultima_visita, c.preferencias_horarios "
-        + "FROM usuarios u JOIN clientes c ON u.idUsuario = c.usuario_id WHERE u.idUsuario = ?";
+        String instrucaoSql = "SELECT u.*, c.data_nascimento, c.endereco, c.quantidade_agendamentos, c.ultima_visita "
+                + "FROM usuarios u JOIN clientes c ON u.idUsuario = c.usuario_id WHERE u.idUsuario = ?";
 
         try {
             conexao = ConexaoDoBanco.criarConexao();
@@ -111,15 +107,8 @@ public class ClienteDAO {
                             }
                         }
 
-                        List<String> preferenciasDeHorarios = new ArrayList<>();
-                        String prefenciaStr = resultado.getString("preferencias_horarios");
-                        
-                        if (prefenciaStr != null && !prefenciaStr.isEmpty()) {
-                            preferenciasDeHorarios.addAll(Arrays.asList(prefenciaStr.split(",")));
-                        }
-
                         return new Cliente(id, nome, cpf, telefone, email, senha, dataDeNascimento, endereco,
-                                quantidadeDeAgendamentos, preferenciasDeHorarios, ultimaVisita);
+                                quantidadeDeAgendamentos, ultimaVisita);
                     }
                 }
             }
@@ -138,11 +127,11 @@ public class ClienteDAO {
 
     public boolean atualizarDadosDoCliente(Cliente clienteParaAtualizar) {
         Connection conexao = null;
-        String instrucaoSql = "UPDATE clientes SET data_nascimento = ?, endereco = ?, preferencias_horarios = ? WHERE usuario_id = ?";
+        String instrucaoSql = "UPDATE clientes SET data_nascimento = ?, endereco = ? WHERE usuario_id = ?";
 
         try {
             conexao = ConexaoDoBanco.criarConexao();
-            conexao.setAutoCommit(false); 
+            conexao.setAutoCommit(false);
 
             boolean sucessoUsuario = usuarioDAO.atualizarDados(clienteParaAtualizar, conexao);
 
@@ -151,16 +140,14 @@ public class ClienteDAO {
             try (PreparedStatement instrucaoPreparadaSql = conexao.prepareStatement(instrucaoSql)) {
                 instrucaoPreparadaSql.setString(1, clienteParaAtualizar.getDataNascimento().toString());
                 instrucaoPreparadaSql.setString(2, clienteParaAtualizar.getEndereco());
-                String preferenciasDeHorarios = String.join(",", clienteParaAtualizar.getPreferenciasDeHorarios());
-                instrucaoPreparadaSql.setString(3, preferenciasDeHorarios);
-                instrucaoPreparadaSql.setInt(4, clienteParaAtualizar.getIdUsuario());
+                instrucaoPreparadaSql.setInt(3, clienteParaAtualizar.getIdUsuario());
 
                 if (instrucaoPreparadaSql.executeUpdate() > 0) {
                     sucessoCliente = true;
                 }
             }
 
-            if (sucessoUsuario || sucessoCliente) {
+            if (sucessoUsuario && sucessoCliente) {
                 conexao.commit();
                 return true;
             } else {
@@ -193,7 +180,7 @@ public class ClienteDAO {
 
         try {
             conexao = ConexaoDoBanco.criarConexao();
-            conexao.setAutoCommit(false); 
+            conexao.setAutoCommit(false);
 
             boolean deletarCliente = false;
             try (PreparedStatement instrucaoPreparada = conexao.prepareStatement(instrucaoSqlClientes)) {
@@ -235,7 +222,7 @@ public class ClienteDAO {
 
     public List<Cliente> listarTodos() {
         List<Cliente> listaDeClientes = new ArrayList<>();
-        String instrucaoSql = "SELECT u.*, c.data_nascimento, c.endereco, c.quantidade_agendamentos, c.ultima_visita, c.preferencias_horarios "
+        String instrucaoSql = "SELECT u.*, c.data_nascimento, c.endereco, c.quantidade_agendamentos, c.ultima_visita "
                 + "FROM usuarios u JOIN clientes c ON u.idUsuario = c.usuario_id";
 
         try (Connection conexao = ConexaoDoBanco.criarConexao();
@@ -259,14 +246,6 @@ public class ClienteDAO {
                 String endereco = resultado.getString("endereco");
                 int quantidadeAgendamentos = resultado.getInt("quantidade_agendamentos");
 
-                List<String> preferenciasDeHorarios = new ArrayList<>();
-                
-                String preferenciasStr = resultado.getString("preferencias_horarios");
-                
-                if (preferenciasStr != null && !preferenciasStr.isEmpty()) {
-                    preferenciasDeHorarios.addAll(Arrays.asList(preferenciasStr.split(",")));
-                }
-
                 LocalDate ultimaVisita = null;
                 String ultimaVisitaStr = resultado.getString("ultima_visita");
                 if (ultimaVisitaStr != null) {
@@ -274,7 +253,7 @@ public class ClienteDAO {
                 }
 
                 Cliente cliente = new Cliente(id, nome, cpf, telefone, email, senha, dataNascimento, endereco,
-                        quantidadeAgendamentos, preferenciasDeHorarios, ultimaVisita);
+                        quantidadeAgendamentos, ultimaVisita);
 
                 listaDeClientes.add(cliente);
             }
