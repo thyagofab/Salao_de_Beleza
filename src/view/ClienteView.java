@@ -64,7 +64,7 @@ public class ClienteView {
         System.out.print("Digite o CPF (apenas números): ");
         String cpf = Entradas.validarCPF();
 
-        System.out.print("Digite o telefone com DDD (10 ou 11 dígitos): ");
+        System.out.print("Digite o telefone com DDD (11 dígitos): ");
         String telefone = Entradas.validarTelefone();
 
         System.out.print("Digite o email: ");
