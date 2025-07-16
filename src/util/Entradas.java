@@ -297,11 +297,6 @@ public class Entradas {
 
     }
     
-
-
-
-
-=======
     public static void limparTela() {
         try {
             String os = System.getProperty("os.name").toLowerCase();

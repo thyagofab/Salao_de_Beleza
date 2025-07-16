@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import model.Cliente;
-import service.ClienteService;
+import model.ClienteService;
 import util.Entradas;
 
 public class ClienteView {
@@ -29,23 +29,20 @@ public class ClienteView {
             System.out.println("==================================");
             System.out.print("Escolha uma opção: ");
 
-            opcao = scanner.nextInt();
-            scanner.nextLine();
-
             opcao = Entradas.lerNumero("Escolha uma opção ");
+
             switch (opcao) {
                 case 1:
-
-                    adicionarCliente();
-                    break;
-                case 2:
                     buscarPorId();
                     break;
-                case 3:
+                case 2:
                     atualizarDadosDoCliente();
                     break;
-                case 4:
+                case 3:
                     deletarDadosCliente();
+                    break;
+                case 4:
+                    exibirListaDeClientes();
                     break;
                 case 5:
                     System.out.println("Gerenciar agendamentos não implementado ainda.");

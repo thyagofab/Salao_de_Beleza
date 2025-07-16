@@ -1,7 +1,7 @@
-package service;
+package model;
 
 import dao.ClienteDAO;
-import model.Cliente;
+
 import java.time.LocalDate;
 import java.util.List;
 

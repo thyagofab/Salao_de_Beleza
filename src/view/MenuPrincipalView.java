@@ -1,7 +1,8 @@
 package view;
 
 import java.util.Scanner;
-import service.ClienteService;
+
+import model.ClienteService;
 import service.CabeleireiroService;
 import util.Entradas;
 
@@ -20,7 +21,7 @@ public class MenuPrincipalView {
 
     public void exibirMenuPrincipal() {
         int opcao = 0;
-        while (opcao != 5) {
+        while (opcao != 4) {
             System.out.println("=== DINASHOW SALÃO DE BELEZA ===");
             System.out.println("| [1] REALIZAR LOGIN           |");
             System.out.println("| [2] CADASTRAR CLIENTE        |");
@@ -33,14 +34,12 @@ public class MenuPrincipalView {
             scanner.nextLine(); 
             switch (opcao) {
                 case 1:
-                    ClienteView clienteView = new ClienteView(clienteService);
                     System.out.println("realizar login não implementado ainda.");
                     break;
                 case 2:
                     Entradas.limparTela();
-                    ClienteView clienteView = new ClienteView(scanner, clienteService);
-                    clienteView.adicionarCliente(scanner);
-
+                    ClienteView clienteView = new ClienteView(clienteService);
+                    clienteView.adicionarCliente();
                     clienteView.MenuClientes();
                     break;
                 case 3:
