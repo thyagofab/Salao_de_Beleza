@@ -30,25 +30,22 @@ public class MenuPrincipalView {
             System.out.println("| [3] CADASTRAR CABELEIREIRO   |");
             System.out.println("| [4] SAIR DO SISTEMA          |");
             System.out.println("================================");
-            System.out.print("Escolha uma opção: ");
-
-            opcao = scanner.nextInt();
-            scanner.nextLine(); 
+            opcao = Entradas.lerNumero("Escolha uma opção: ");
             switch (opcao) {
                 case 1:
-                    System.out.println("realizar login não implementado ainda.");
+                    Entradas.limparTela();
+                    UsuarioView usuarioView = new UsuarioView(scanner, new service.UsuarioService());
+                    usuarioView.efetuarLogin();
                     break;
                 case 2:
                     Entradas.limparTela();
                     ClienteView clienteView = new ClienteView(clienteService);
                     clienteView.adicionarCliente();
-                    clienteView.MenuClientes();
                     break;
                 case 3:
                     Entradas.limparTela();
                     CabeleireiroView cabeleireiroView = new CabeleireiroView(this.scanner, this.cabeleireiroService, this.procedimentoService);
                     cabeleireiroView.adicionarCabeleireiro();
-                    cabeleireiroView.MenuCabeleireiros();
                     break;
                 case 4:
                     System.out.println("Saindo do sistema...");

@@ -332,4 +332,8 @@ public class Entradas {
             e.printStackTrace();
         }
     }
+
+    public static String lerLinha() {
+        return scanner.nextLine();
+    }
 }
