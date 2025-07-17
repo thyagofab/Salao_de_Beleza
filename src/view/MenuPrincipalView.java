@@ -3,7 +3,9 @@ package view;
 import java.util.Scanner;
 
 import service.ClienteService;
+import service.ProcedimentoService;
 import service.CabeleireiroService;
+//import service.procedimentoService;
 import util.Entradas;
 
 public class MenuPrincipalView {
@@ -11,6 +13,7 @@ public class MenuPrincipalView {
     private Scanner scanner;
     private ClienteService clienteService;
     private CabeleireiroService cabeleireiroService;
+    private ProcedimentoService procedimentoService;
 
     public MenuPrincipalView() {
         this.scanner = new Scanner(System.in);
@@ -41,7 +44,7 @@ public class MenuPrincipalView {
                     break;
                 case 3:
                     Entradas.limparTela();
-                    CabeleireiroView cabeleireiroView = new CabeleireiroView(scanner, cabeleireiroService);
+                    CabeleireiroView cabeleireiroView = new CabeleireiroView(this.scanner, this.cabeleireiroService, this.procedimentoService);
                     cabeleireiroView.adicionarCabeleireiro();
                     break;
                 case 4:

@@ -39,6 +39,34 @@ public class UsuarioDAO {
         }
     }
 
+    public int criarUsuarioCabeleireiro(Usuario usuario, Connection conexao) throws SQLException {
+        String instrucaoSql = "INSERT INTO usuarios(nome, cpf, telefone, email, senha, tipo) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement instrucaoPreparada = conexao.prepareStatement(instrucaoSql,
+                Statement.RETURN_GENERATED_KEYS)) {
+            instrucaoPreparada.setString(1, usuario.getNome());
+            instrucaoPreparada.setString(2, usuario.getCpf());
+            instrucaoPreparada.setString(3, usuario.getTelefone());
+            instrucaoPreparada.setString(4, usuario.getEmail());
+            instrucaoPreparada.setString(5, usuario.getSenha());
+            instrucaoPreparada.setString(6, "Cabeleireiro");
+
+            int linhasAfetadas = instrucaoPreparada.executeUpdate();
+
+            if (linhasAfetadas == 0) {
+                throw new SQLException("Falha ao criar usuário, nenhuma linha afetada.");
+            }
+
+            try (ResultSet resultado = instrucaoPreparada.getGeneratedKeys()) {
+                if (resultado.next()) {
+                    return resultado.getInt(1);
+                } else {
+                    throw new SQLException("Falha ao obter o ID do usuário.");
+                }
+            }
+        }
+    }
+
     public boolean atualizarDados(Usuario usuario, Connection conexao) throws SQLException {
         String instrucaoSql = "UPDATE usuarios SET nome = ?, cpf = ?, telefone = ?, email = ?, senha = ? WHERE idUsuario = ?";
 
