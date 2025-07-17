@@ -111,4 +111,20 @@ public class UsuarioDAO {
         return null;
     }
 
+    public int buscarIdPorEmail(String email) {
+    String sql = "SELECT idUsuario FROM usuarios WHERE email = ?";
+    try (Connection conn = ConexaoDoBanco.criarConexao();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, email);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("idUsuario");
+            }
+        }
+    } catch (SQLException e) {
+        System.err.println("Erro ao buscar ID por e-mail: " + e.getMessage());
+    }
+    return -1; // Retorna -1 se não encontrar
+}
+
 }

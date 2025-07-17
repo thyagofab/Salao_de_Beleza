@@ -27,10 +27,7 @@ public class MenuPrincipalView {
             System.out.println("| [3] CADASTRAR CABELEIREIRO   |");
             System.out.println("| [4] SAIR DO SISTEMA          |");
             System.out.println("================================");
-            System.out.print("Escolha uma opção: ");
-
-            opcao = scanner.nextInt();
-            scanner.nextLine(); 
+            opcao = Entradas.lerNumero("Escolha uma opção: ");
             switch (opcao) {
                 case 1:
                     Entradas.limparTela();
@@ -41,13 +38,11 @@ public class MenuPrincipalView {
                     Entradas.limparTela();
                     ClienteView clienteView = new ClienteView(clienteService);
                     clienteView.adicionarCliente();
-                    clienteView.MenuClientes();
                     break;
                 case 3:
                     Entradas.limparTela();
                     CabeleireiroView cabeleireiroView = new CabeleireiroView(scanner, cabeleireiroService);
                     cabeleireiroView.adicionarCabeleireiro();
-                    cabeleireiroView.menuCabeleireiro();
                     break;
                 case 4:
                     System.out.println("Saindo do sistema...");

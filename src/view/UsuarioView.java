@@ -28,16 +28,24 @@ public class UsuarioView {
         }
     }
 
-    private void redirecionarParaMenu(String email, String tipo) {
-        Entradas.limparTela();
-        if ("Cliente".equals(tipo)) {
-            ClienteView cView = new ClienteView(new service.ClienteService());
-            cView.MenuClientes();
-        } else if ("Cabeleireiro".equals(tipo)) {
-            CabeleireiroView cabView = new CabeleireiroView(scanner, new service.CabeleireiroService());
-            cabView.menuCabeleireiro();
-        } else {
-            System.out.println("Tipo de usuário desconhecido: " + tipo);
-        }
+   private void redirecionarParaMenu(String email, String tipo) {
+    Entradas.limparTela();
+
+    // Busca o ID do usuário que acabou de logar
+    int idUsuarioLogado = new dao.UsuarioDAO().buscarIdPorEmail(email);
+    if (idUsuarioLogado == -1) {
+        System.out.println("Erro crítico: não foi possível encontrar o ID do usuário logado.");
+        return;
     }
+
+    if ("Cliente".equals(tipo)) {
+        ClienteView cView = new ClienteView(new service.ClienteService());
+        cView.MenuClientes(idUsuarioLogado); // Passa o ID do cliente logado
+    } else if ("Cabeleireiro".equals(tipo)) {
+        //CabeleireiroView cabView = new CabeleireiroView(scanner, new service.CabeleireiroService());
+        //cabView.menuCabeleireiro(idUsuarioLogado); // Passa o ID do cabeleireiro logado
+    } else {
+        System.out.println("usuario não identificado.");
+    }
+}
 }
