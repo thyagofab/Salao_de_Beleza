@@ -2,10 +2,9 @@ package view;
 
 import java.util.Scanner;
 
-import model.ClienteService;
+import service.ClienteService;
 import service.CabeleireiroService;
 import util.Entradas;
-
 
 public class MenuPrincipalView {
 

@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import model.Cliente;
-import model.ClienteService;
+import service.ClienteService;
 import util.Entradas;
 
 public class ClienteView {
