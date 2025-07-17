@@ -1,6 +1,7 @@
 package util;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
@@ -10,6 +11,12 @@ import service.UsuarioService;
 public class Entradas {
     private static UsuarioService usuarioService = new UsuarioService();
     private static Scanner scanner = new Scanner(System.in);
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+
+
+    public static Scanner getScanner(){
+        return scanner;
+    }
 
     public static void fecharScanner(){
         scanner.close();
@@ -120,6 +127,21 @@ public class Entradas {
         }
     }
 
+    public static LocalTime validarHorario(String prompt) {
+        LocalTime horario = null;
+        boolean horarioValido = false;
+        do {
+            System.out.print(prompt);
+            String horarioStr = scanner.nextLine().trim();
+            try {
+                horario = LocalTime.parse(horarioStr, TIME_FORMATTER);
+                horarioValido = true;
+            } catch (DateTimeParseException e) {
+                System.err.println("Formato de horário inválido! Digite no formato HH:mm (Ex: 09:00).");
+            }
+        } while (!horarioValido);
+        return horario;
+    }
 
     public static String validarCPF() {
         String cpf;
