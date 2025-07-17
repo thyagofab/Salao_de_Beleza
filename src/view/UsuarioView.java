@@ -1,37 +1,43 @@
 package view;
 
 import java.util.Scanner;
-
 import service.UsuarioService;
+import util.Entradas;
 
 public class UsuarioView {
-    private Scanner sc;
+    private Scanner scanner;
     private UsuarioService usuarioService;
 
-    public void consultarUsuario(){
-        sc = new Scanner(System.in);
-        usuarioService = new UsuarioService();
+    public UsuarioView(Scanner scanner, UsuarioService usuarioService) {
+        this.scanner = scanner;
+        this.usuarioService = usuarioService;
+    }
 
-        System.out.println("Consultar Usuário");
-        System.out.print("Digite o CPF do usuário: ");
+    public void efetuarLogin() {
+        System.out.println("==== LOGIN ====");
+        System.out.print("E-mail: ");
+        String email = scanner.nextLine();
+        System.out.print("Senha: ");
+        String senha = scanner.nextLine();
 
-        String cpf = sc.nextLine();
-
-        if (usuarioService.verificarCPF(cpf)) {
-            System.out.println("Usuário encontrado.");
+        String tipo = usuarioService.autenticar(email, senha);
+        if (tipo != null) {
+            redirecionarParaMenu(email, tipo);
         } else {
-            System.out.println("Usuário não encontrado.");
+            System.out.println("Credenciais inválidas. Tente novamente.");
         }
+    }
 
-        System.out.print("Digite o email do usuário: ");
-        String email = sc.nextLine();
-
-        if (usuarioService.verificarEmail(email)) {
-            System.out.println("Email encontrado.");
+    private void redirecionarParaMenu(String email, String tipo) {
+        Entradas.limparTela();
+        if ("Cliente".equals(tipo)) {
+            ClienteView cView = new ClienteView(new service.ClienteService());
+            cView.MenuClientes();
+        } else if ("Cabeleireiro".equals(tipo)) {
+            CabeleireiroView cabView = new CabeleireiroView(scanner, new service.CabeleireiroService());
+            cabView.menuCabeleireiro();
         } else {
-            System.out.println("Email não encontrado.");
+            System.out.println("Tipo de usuário desconhecido: " + tipo);
         }
-        
-        sc.close();
     }
 }

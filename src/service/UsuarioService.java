@@ -13,7 +13,13 @@ public class UsuarioService {
         return usuarioDAO.emailExiste(email);
     }
 
-    
+    public String autenticar(String email, String senha) {
+        try {
+            return usuarioDAO.autenticarObterTipo(email, senha);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao autenticar usuário", e);
+        }
+    }
 
     
 }

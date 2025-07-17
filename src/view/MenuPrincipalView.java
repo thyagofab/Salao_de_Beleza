@@ -33,7 +33,9 @@ public class MenuPrincipalView {
             scanner.nextLine(); 
             switch (opcao) {
                 case 1:
-                    System.out.println("realizar login não implementado ainda.");
+                    Entradas.limparTela();
+                    UsuarioView usuarioView = new UsuarioView(scanner, new service.UsuarioService());
+                    usuarioView.efetuarLogin();
                     break;
                 case 2:
                     Entradas.limparTela();

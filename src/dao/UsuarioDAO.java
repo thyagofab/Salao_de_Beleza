@@ -96,6 +96,19 @@ public class UsuarioDAO {
         }
     }
 
-
+    public String autenticarObterTipo(String email, String senha) throws SQLException {
+        String sql = "SELECT tipo FROM usuarios WHERE email = ? AND senha = ?";
+        try (Connection conn = ConexaoDoBanco.criarConexao();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, email);
+            ps.setString(2, senha);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("tipo");
+                }
+            }
+        }
+        return null;
+    }
 
 }
