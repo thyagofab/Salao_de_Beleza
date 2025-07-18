@@ -24,7 +24,8 @@ public class CabeleireiroView {
         this.sc = sc;
     }
 
-    public void MenuCabeleireiros() {
+    public void MenuCabeleireiros(int idCabeleireiro) {
+        Cabeleireiro cabeleireiroLogado = this.cabeleireiroService.buscarCabeleireiro(idCabeleireiro);
         int opcao = 0;
 
         while (opcao != 7) {
@@ -59,7 +60,8 @@ public class CabeleireiroView {
                     procedimentoView.menuProcedimento();
                     break;
                 case 6:
-                    System.out.println("Gerenciar agendamentos não implementado ainda.");
+                    AgendamentoView agendamentoView = new AgendamentoView();
+                    agendamentoView.menuAgendamentoCabeleireiro(cabeleireiroLogado);
                     break;
                 case 7:
                     System.out.println("Voltando ao menu principal...");
@@ -97,15 +99,23 @@ public class CabeleireiroView {
         int total = Entradas.lerNumero("Total de avaliações");
 
         List<String> dias = new ArrayList<>();
-        String diasStr = Entradas.lerString("Dias disponíveis (ex: SEGUNDA,TERÇA)");
+        System.out.println("Digite os dias disponíveis (separados por vírgula, ex: SEGUNDA,TERÇA): ");
+        String diasStr = sc.nextLine().toUpperCase();
+        
         if (!diasStr.isEmpty()) {
             dias = Arrays.asList(diasStr.split(","));
         }
 
-        LocalTime horarioDisponivel = Entradas.validarHorario("Horário disponível (ex: 09:00): ");
-
+        System.out.print("Horários disponíveis (HH:mm, separados por vírgula, ex: 09:00,10:00): ");
+        String[] horariosStr = Entradas.lerLinha().split(",");
         List<LocalTime> horarios = new ArrayList<>();
-        horarios.add(horarioDisponivel);
+        for (String h : horariosStr) {
+            try {
+                horarios.add(LocalTime.parse(h.trim()));
+            } catch (Exception e) {
+                System.out.println("Horário '"+ h +"' inválido. Ignorando.");
+            }
+        }
 
         System.out.print("Tempo de experiência: ");
         String tempo = sc.nextLine();
