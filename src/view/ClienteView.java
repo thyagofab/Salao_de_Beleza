@@ -14,7 +14,8 @@ public class ClienteView {
         this.clienteService = clienteService;
     }
 
-    public void MenuClientes() {
+    public void MenuClientes(int idCliente) {
+         Cliente clienteLogado = this.clienteService.consultarCliente(idCliente);
         int opcao = 0;
 
         while (opcao != 6) {
@@ -27,7 +28,6 @@ public class ClienteView {
             System.out.println("| [5] AGENDAMENTOS               |");
             System.out.println("| [6] VOLTAR AO MENU PRINCIPAL   |");
             System.out.println("==================================");
-            System.out.print("Escolha uma opção: ");
 
             opcao = Entradas.lerNumero("Escolha uma opção ");
 
@@ -45,8 +45,9 @@ public class ClienteView {
                     exibirListaDeClientes();
                     break;
                 case 5:
-                    System.out.println("Gerenciar agendamentos não implementado ainda.");
-                    break;
+                    AgendamentoView agendamentoView = new AgendamentoView();
+                agendamentoView.menuAgendamentoCliente(clienteLogado);
+                break;
                 case 6:
                     System.out.println("Voltando...");
                     break;

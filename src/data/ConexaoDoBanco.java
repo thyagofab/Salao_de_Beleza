@@ -57,13 +57,20 @@ public class ConexaoDoBanco {
                             + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                             + "cliente_id INTEGER NOT NULL,"
                             + "cabeleireiro_id INTEGER NOT NULL,"
-                            + "procedimento_id INTEGER NOT NULL,"
                             + "data_hora TEXT NOT NULL,"
                             + "status TEXT NOT NULL,"
+                            + "preco_total REAL NOT NULL,"
                             + "FOREIGN KEY (cliente_id) REFERENCES clientes(usuario_id),"
-                            + "FOREIGN KEY (cabeleireiro_id) REFERENCES cabeleireiros(usuario_id),"
-                            + "FOREIGN KEY (procedimento_id) REFERENCES procedimento(id)"
+                            + "FOREIGN KEY (cabeleireiro_id) REFERENCES cabeleireiros(usuario_id)"
                             + ");";
+
+       String sqlAgendamentoProcedimentos = "CREATE TABLE IF NOT EXISTS agendamento_procedimentos ("
+            + "agendamento_id INTEGER NOT NULL,"
+            + "procedimento_id INTEGER NOT NULL,"
+            + "PRIMARY KEY (agendamento_id, procedimento_id),"
+            + "FOREIGN KEY (agendamento_id) REFERENCES agendamentos(id) ON DELETE CASCADE,"
+            + "FOREIGN KEY (procedimento_id) REFERENCES procedimento(id) ON DELETE CASCADE"
+            + ");";
         
         try (Connection c = criarConexao();
              Statement st = c.createStatement()) {
@@ -72,6 +79,7 @@ public class ConexaoDoBanco {
             st.execute(sqlCliente);
             st.execute(sqlCabeleireiro);
             st.execute(sqlAgendamento);
+            st.execute(sqlAgendamentoProcedimentos);
             st.execute(sqlProcedimento);
             
 
