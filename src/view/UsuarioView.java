@@ -42,8 +42,8 @@ public class UsuarioView {
         ClienteView cView = new ClienteView(new service.ClienteService());
         cView.MenuClientes(idUsuarioLogado); // Passa o ID do cliente logado
     } else if ("Cabeleireiro".equals(tipo)) {
-        //CabeleireiroView cabView = new CabeleireiroView(scanner, new service.CabeleireiroService());
-        //cabView.menuCabeleireiro(idUsuarioLogado); // Passa o ID do cabeleireiro logado
+        CabeleireiroView cabView = new CabeleireiroView(scanner, new service.CabeleireiroService(), new service.ProcedimentoService());
+        cabView.MenuCabeleireiros(idUsuarioLogado); // Passa o ID do cabeleireiro logado
     } else {
         System.out.println("usuario não identificado.");
     }
