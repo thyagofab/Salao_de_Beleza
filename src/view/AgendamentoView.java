@@ -1,7 +1,6 @@
 package view;
 
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,32 +16,62 @@ import service.ProcedimentoService;
 import util.Entradas;
 
 public class AgendamentoView {
-    private AgendamentoService agendamentoService;
-
-   public AgendamentoView() {
-        this.agendamentoService = new AgendamentoService();
-    }
+    private AgendamentoService servicoAgendamento = new AgendamentoService();
 
     public void menuAgendamentoCliente(Cliente clienteLogado) {
         int opcao = 0;
-        while (opcao != 4) {
-            System.out.println("\n======== MEUS AGENDAMENTOS (Cliente) ========");
-            System.out.println("| [1] NOVO AGENDAMENTO                        |");
-            System.out.println("| [2] VISUALIZAR MEUS AGENDAMENTOS            |");
-            System.out.println("| [3] CANCELAR UM AGENDAMENTO                 |");
-            System.out.println("| [4] VOLTAR                                  |");
-            System.out.println("===============================================");
-            opcao = Entradas.lerNumero("Escolha uma opção");
+        while (opcao != 5) {
+            System.out.println("\n======== MEUS AGENDAMENTOS (" + clienteLogado.getNome() + ") ========");
+            System.out.println("| [1] NOVO AGENDAMENTO                      |");
+            System.out.println("| [2] VISUALIZAR MEUS AGENDAMENTOS          |");
+            System.out.println("| [3] REAGENDAR                             |");
+            System.out.println("| [4] CANCELAR                              |");
+            System.out.println("| [5] VOLTAR                                |");
+            System.out.println("=============================================");
+            opcao = Entradas.lerNumero("Escolha uma opção: ");
 
             switch (opcao) {
                 case 1:
-                    realizarNovoAgendamento(clienteLogado);
+                    NovoAgendamento(clienteLogado);
                     break;
                 case 2:
-                    listarAgendamentosDoCliente(clienteLogado);
+                    HistoricoCliente(clienteLogado);
                     break;
                 case 3:
-                    cancelarAgendamentoCliente(clienteLogado);
+                    ReagendarAgendamento(clienteLogado);
+                    break;
+                case 4:
+                    CancelamentoAgendamento(clienteLogado);
+                    break;
+                case 5:
+                    System.out.println("Voltando...");
+                    break;
+                default:
+                    System.out.println("Opção inválida.");
+            }
+        }
+    }
+
+    public void menuAgendamentoCabeleireiro(Cabeleireiro cabeleireiroLogado) {
+        int opcao = 0;
+        while (opcao != 4) {
+            System.out.println("\n======== MINHA AGENDA (" + cabeleireiroLogado.getNome() + ") ========");
+            System.out.println("| [1] VISUALIZAR MINHA AGENDA               |");
+            System.out.println("| [2] CONCLUIR UM AGENDAMENTO               |");
+            System.out.println("| [3] REAGENDAR                             |");
+            System.out.println("| [4] VOLTAR                                |");
+            System.out.println("=============================================");
+            opcao = Entradas.lerNumero("Escolha uma opção: ");
+
+            switch (opcao) {
+                case 1:
+                    exibirAgendaDoCabeleireiro(cabeleireiroLogado);
+                    break;
+                case 2:
+                    ConcluirAgendamento(cabeleireiroLogado);
+                    break;
+                case 3:
+                    ReagendarAgendamento(null);
                     break;
                 case 4:
                     System.out.println("Voltando...");
@@ -53,172 +82,159 @@ public class AgendamentoView {
         }
     }
 
-   private void realizarNovoAgendamento(Cliente clienteLogado) {
-    System.out.println("\n--- NOVO AGENDAMENTO ---");
-
-    // 1. Listar e escolher o cabeleireiro
-    CabeleireiroService cabeleireiroService = new CabeleireiroService();
-    TreeMap<Integer, Cabeleireiro> cabeleireiros = cabeleireiroService.listarCabeleireiros();
-    if (cabeleireiros.isEmpty()) {
-        System.out.println("Nenhum cabeleireiro disponível no momento.");
-        return;
-    }
-    System.out.println("Cabeleireiros disponíveis:");
-    cabeleireiros.forEach((id, cab) -> System.out.println(id + " - " + cab.getNome()));
-    int cabeleireiroId = Entradas.lerNumero("Digite o ID do cabeleireiro desejado: ");
-
-    // Valida a escolha do cabeleireiro
-    Cabeleireiro cabeleireiroEscolhido = cabeleireiros.get(cabeleireiroId);
-    if (cabeleireiroEscolhido == null) {
-        System.out.println("ID de cabeleireiro inválido.");
-        return;
-    }
-
-    // 2. MOSTRAR a disponibilidade do cabeleireiro escolhido
-    System.out.println("\nDisponibilidade para " + cabeleireiroEscolhido.getNome() + ":");
-    System.out.println("Dias: " + cabeleireiroEscolhido.getDiasDisponiveis());
-    System.out.println("Horários: " + cabeleireiroEscolhido.getHorariosDisponiveis());
-
-    // 3. Pedir DIA DA SEMANA e HORÁRIO
-    System.out.print("Digite o dia da semana desejado (ex: TERCA): ");
-    String diaSemana = Entradas.lerLinha().toUpperCase();
-
-    System.out.print("Digite o horário desejado (ex: 10:20): ");
-    String horarioStr = Entradas.lerLinha();
-    LocalTime horario;
-    try {
-        horario = LocalTime.parse(horarioStr);
-    } catch (DateTimeParseException e) {
-        System.out.println("Formato de horário inválido.");
-        return;
-    }
-
-    ProcedimentoService procedimentoService = new ProcedimentoService();
-    TreeMap<Integer, Procedimento> procedimentos = procedimentoService.listarProcedimentos();
-    if (procedimentos.isEmpty()) {
-        System.out.println("Nenhum procedimento disponível no momento.");
-        return;
-    }
-    System.out.println("\nProcedimentos disponíveis:");
-    procedimentos.forEach((id, proc) -> System.out.printf("%d - %s (R$ %.2f)\n", id, proc.getNome(), proc.getPreco()));
-    
-    List<Integer> procedimentoIds = new ArrayList<>();
-    System.out.print("Digite os IDs dos procedimentos (separados por vírgula): ");
-    String[] idsStr = Entradas.lerLinha().split(",");
-    for (String idStr : idsStr) {
-        try {
-            procedimentoIds.add(Integer.parseInt(idStr.trim()));
-        } catch (NumberFormatException e) {
-            System.out.println("'" + idStr + "' não é um ID válido. Ignorando.");
-        }
-    }
-
-    Agendamento agendamentoCriado = agendamentoService.criarAgendamento(
-            clienteLogado.getIdUsuario(),
-            cabeleireiroId,
-            procedimentoIds,
-            diaSemana, // Passando o dia da semana
-            horario    // Passando o horário
-    );
-    
-    if (agendamentoCriado != null) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm");
-        System.out.println("\nAgendamento criado com sucesso!");
-        System.out.println("Data calculada: " + agendamentoCriado.getDataHora().format(formatter));
-        System.out.printf("Valor Total: R$ %.2f\n", agendamentoCriado.getPrecoTotal());
-    } else {
-        System.out.println("\nNão foi possível criar o agendamento. Verifique os erros informados.");
-    }
-}
-
-    private void listarAgendamentosDoCliente(Cliente clienteLogado) {
-        List<Agendamento> agendamentos = agendamentoService.listarAgendamentosPorCliente(clienteLogado.getIdUsuario());
-        if (agendamentos.isEmpty()) {
-            System.out.println("Você não possui agendamentos.");
+    private void NovoAgendamento(Cliente cliente) {
+        System.out.println("\n=== NOVO AGENDAMENTO ===");
+        CabeleireiroService servicoCabeleireiro = new CabeleireiroService();
+        TreeMap<Integer, Cabeleireiro> cabeleireiros = servicoCabeleireiro.listarCabeleireiros();
+        if (cabeleireiros.isEmpty()) {
+            System.out.println("Nenhum cabeleireiro disponível.");
             return;
         }
-        System.out.println("\n--- Meus Agendamentos ---");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm");
-        for (Agendamento ag : agendamentos) {
-            System.out.println("---------------------------------");
-            System.out.println("ID: " + ag.getId());
-            System.out.println("Cabeleireiro: " + ag.getCabeleireiro().getNome());
-            System.out.println("Data/Hora: " + ag.getDataHora().format(formatter));
-            System.out.println("Status: " + ag.getStatus());
-            System.out.printf("Valor: R$ %.2f\n", ag.getPrecoTotal());
+        System.out.println("Cabeleireiros disponíveis:");
+        cabeleireiros.forEach((id, cab) -> System.out.println(id + " - " + cab.getNome()));
+        int idCabeleireiro = Entradas.lerNumero("Digite o ID do cabeleireiro: ");
+
+        Cabeleireiro cabeleireiroEscolhido = cabeleireiros.get(idCabeleireiro);
+        if (cabeleireiroEscolhido == null) {
+            System.out.println("ID de cabeleireiro inválido.");
+            return;
         }
-        System.out.println("---------------------------------");
-    }
+        System.out.println("\nDisponibilidade para " + cabeleireiroEscolhido.getNome() + ":");
+        System.out.println("Dias: " + cabeleireiroEscolhido.getDiasDisponiveis());
+        System.out.println("Horários: " + cabeleireiroEscolhido.getHorariosDisponiveis());
 
-    private void cancelarAgendamentoCliente(Cliente clienteLogado) {
-        listarAgendamentosDoCliente(clienteLogado);
-        int idAgendamento = Entradas.lerNumero("Digite o ID do agendamento que deseja cancelar");
-        
-        if (agendamentoService.cancelarAgendamento(idAgendamento)) {
-            System.out.println("Agendamento cancelado com sucesso.");
-        } else {
-            System.out.println("Falha ao cancelar o agendamento. Verifique se o ID está correto e se o agendamento já não foi concluído/cancelado.");
+        System.out.print("Digite o dia da semana desejado (ex: TERCA): ");
+        String diaSemana = Entradas.lerLinha().toUpperCase();
+        List<LocalTime> horariosLivres = servicoAgendamento.listarHorariosDisponiveisParaData(idCabeleireiro,
+                diaSemana);
+
+        if (horariosLivres.isEmpty()) {
+            System.out.println(
+                    "Desculpe, não há horários livres para " + cabeleireiroEscolhido.getNome() + " neste dia.");
+            return;
         }
-    }
 
-    public void menuAgendamentoCabeleireiro(Cabeleireiro cabeleireiroLogado) {
-        int opcao = 0;
-        while (opcao != 3) {
-            System.out.println("\n======== MINHA AGENDA (Cabeleireiro) ========");
-            System.out.println("| [1] VISUALIZAR MINHA AGENDA                 |");
-            System.out.println("| [2] CONCLUIR AGENDAMENTO                    |");
-            System.out.println("| [3] VOLTAR                                  |");
-            System.out.println("===============================================");
-            opcao = Entradas.lerNumero("Escolha uma opção");
+        System.out.println("Horários realmente disponíveis: " + horariosLivres);
+        System.out.print("Digite o horário desejado (ex: 10:20): ");
+        LocalTime horario;
+        try {
+            horario = LocalTime.parse(Entradas.lerLinha());
+        } catch (DateTimeParseException e) {
+            System.out.println("Formato de horário inválido.");
+            return;
+        }
 
-            switch (opcao) {
-                case 1:
-                    listarAgendamentosDoCabeleireiro(cabeleireiroLogado);
-                    break;
-                case 2:
-                    concluirAgendamentoView(cabeleireiroLogado);
-                    break;
-                case 3:
-                    System.out.println("Voltando...");
-                    break;
-                default:
-                    System.out.println("Opção inválida.");
+        ProcedimentoService servicoProcedimento = new ProcedimentoService();
+        TreeMap<Integer, Procedimento> procedimentos = servicoProcedimento.listarProcedimentos();
+        System.out.println("\nProcedimentos disponíveis:");
+        procedimentos
+                .forEach((id, proc) -> System.out.printf("%d - %s (R$ %.2f)\n", id, proc.getNome(), proc.getPreco()));
+
+        System.out.print("Digite os IDs dos procedimentos (separados por vírgula): ");
+        String[] idsStr = Entradas.lerLinha().split(",");
+        List<Integer> idsProcedimentos = new ArrayList<>();
+        for (String idStr : idsStr) {
+            try {
+                idsProcedimentos.add(Integer.parseInt(idStr.trim()));
+            } catch (NumberFormatException e) {
+                System.out.println("ID inválido: " + idStr);
             }
         }
+
+        Agendamento agendamentoCriado = servicoAgendamento.criarAgendamento(cliente.getIdUsuario(), idCabeleireiro,
+                idsProcedimentos, diaSemana, horario);
+
+        if (agendamentoCriado != null) {
+            System.out.println("\nAgendamento criado com sucesso!");
+            System.out.println(agendamentoCriado);
+        } else {
+            System.out.println("\nNão foi possível criar o agendamento.");
+        }
     }
-    
-    private void listarAgendamentosDoCabeleireiro(Cabeleireiro cabeleireiroLogado) {
-        List<Agendamento> agendamentos = agendamentoService.listarAgendamentosPorCabeleireiro(cabeleireiroLogado.getIdUsuario());
+
+    private void ReagendarAgendamento(Cliente clienteLogado) {
+        if (clienteLogado != null) {
+            HistoricoCliente(clienteLogado);
+        } else {
+            System.out.println("Para reagendar, por favor, visualize sua agenda para saber o ID.");
+        }
+
+        System.out.println("\n=== REAGENDAR AGENDAMENTO ===");
+        int idAgendamento = Entradas.lerNumero("Digite o ID do agendamento que deseja reagendar: ");
+
+        Agendamento agendamento = servicoAgendamento.buscarAgendamentoPorId(idAgendamento);
+        if (agendamento == null) {
+            System.out.println("Agendamento não encontrado.");
+            return;
+        }
+
+        System.out.println("\nDisponibilidade do cabeleireiro " + agendamento.getCabeleireiro().getNome() + ":");
+        System.out.println("Dias: " + agendamento.getCabeleireiro().getDiasDisponiveis());
+        System.out.println("Horários: " + agendamento.getCabeleireiro().getHorariosDisponiveis());
+
+        System.out.print("Digite o NOVO dia da semana (ex: SEXTA): ");
+        String novoDia = Entradas.lerLinha().toUpperCase();
+        System.out.print("Digite o NOVO horário (ex: 15:00): ");
+        String horarioStr = Entradas.lerLinha();
+        LocalTime novoHorario;
+        try {
+            novoHorario = LocalTime.parse(horarioStr);
+        } catch (DateTimeParseException e) {
+            System.out.println("Formato de horário inválido.");
+            return;
+        }
+
+        Agendamento reagendado = servicoAgendamento.reagendar(idAgendamento, novoDia, novoHorario);
+        if (reagendado != null) {
+            System.out.println("\nSucesso! Agendamento foi reagendado para:");
+            System.out.println(reagendado);
+        } else {
+            System.out.println("\nNão foi possível reagendar.");
+        }
+    }
+
+    private void ConcluirAgendamento(Cabeleireiro cabeleireiroLogado) {
+        exibirAgendaDoCabeleireiro(cabeleireiroLogado);
+        int idAgendamento = Entradas.lerNumero("Digite o ID do agendamento para concluir: ");
+        if (servicoAgendamento.concluirAgendamento(idAgendamento)) {
+            System.out.println("Agendamento concluído com sucesso!");
+        } else {
+            System.out.println("Falha ao concluir o agendamento.");
+        }
+    }
+
+    private void CancelamentoAgendamento(Cliente clienteLogado) {
+        HistoricoCliente(clienteLogado);
+        int idAgendamento = Entradas.lerNumero("Digite o ID do agendamento para cancelar: ");
+        if (servicoAgendamento.cancelarAgendamento(idAgendamento)) {
+            System.out.println("Agendamento cancelado com sucesso.");
+        } else {
+            System.out.println("Falha ao cancelar o agendamento.");
+        }
+    }
+
+    private void HistoricoCliente(Cliente clienteLogado) {
+        List<Agendamento> agendamentos = servicoAgendamento.listarAgendamentosPorCliente(clienteLogado.getIdUsuario());
         if (agendamentos.isEmpty()) {
             System.out.println("Você não possui agendamentos.");
             return;
         }
-        System.out.println("\n--- Minha Agenda ---");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm");
+        System.out.println("\n=== Meus Agendamentos ===");
         for (Agendamento ag : agendamentos) {
-            System.out.println("---------------------------------");
-            System.out.println("ID: " + ag.getId());
-            System.out.println("Cliente: " + ag.getCliente().getNome());
-            System.out.println("Data/Hora: " + ag.getDataHora().format(formatter));
-            System.out.println("Status: " + ag.getStatus());
-            System.out.print("Procedimentos: ");
-            ag.getProcedimentos().forEach(p -> System.out.print(p.getNome() + "; "));
-            System.out.println();
-        }
-        System.out.println("---------------------------------");
-    }
-
-    private void concluirAgendamentoView(Cabeleireiro cabeleireiroLogado) {
-        listarAgendamentosDoCabeleireiro(cabeleireiroLogado);
-        int idAgendamento = Entradas.lerNumero("Digite o ID do agendamento que deseja concluir");
-
-        if(agendamentoService.concluirAgendamento(idAgendamento)) {
-            System.out.println("Agendamento concluído com sucesso! A última visita do cliente foi atualizada.");
-        } else {
-            System.out.println("Falha ao concluir o agendamento. Verifique o ID.");
+            System.out.println(ag.toString());
         }
     }
 
-
-    
+    private void exibirAgendaDoCabeleireiro(Cabeleireiro cabeleireiroLogado) {
+        List<Agendamento> agendamentos = servicoAgendamento
+                .listarAgendamentosPorCabeleireiro(cabeleireiroLogado.getIdUsuario());
+        if (agendamentos.isEmpty()) {
+            System.out.println("Você não possui agendamentos na sua agenda.");
+            return;
+        }
+        System.out.println("\n=== Minha Agenda ===");
+        for (Agendamento ag : agendamentos) {
+            System.out.println(ag.toString());
+        }
+    }
 }
