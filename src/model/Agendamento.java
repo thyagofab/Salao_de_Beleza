@@ -12,15 +12,17 @@ public class Agendamento {
     private StatusAgendamento status;
     private double precoTotal;
 
-    public Agendamento(Cliente cliente, Cabeleireiro cabeleireiro, List<Procedimento> procedimentos, LocalDateTime dataHora) {
+    public Agendamento(Cliente cliente, Cabeleireiro cabeleireiro, List<Procedimento> procedimentos,
+            LocalDateTime dataHora) {
         this.cliente = cliente;
         this.cabeleireiro = cabeleireiro;
         this.procedimentos = procedimentos;
         this.dataHora = dataHora;
-        this.status = StatusAgendamento.AGENDADO; 
+        this.status = StatusAgendamento.AGENDADO;
     }
 
-    public Agendamento(int id, Cliente cliente, Cabeleireiro cabeleireiro, List<Procedimento> procedimentos, LocalDateTime dataHora, StatusAgendamento status, double precoTotal) {
+    public Agendamento(int id, Cliente cliente, Cabeleireiro cabeleireiro, List<Procedimento> procedimentos,
+            LocalDateTime dataHora, StatusAgendamento status, double precoTotal) {
         this.id = id;
         this.cliente = cliente;
         this.cabeleireiro = cabeleireiro;
@@ -86,14 +88,13 @@ public class Agendamento {
         this.precoTotal = precoTotal;
     }
 
-    public String toString(){
-        return "Agendamento{" +
-                "id=" + id +
-                ", cliente=" + cliente.getNome() +
-                ", cabeleireiro=" + cabeleireiro.getNome() +
-                ", dataHora=" + dataHora +
-                ", status=" + status +
-                ", precoTotal=" + precoTotal +
-                '}';
+    public String toString() {
+        return "---------------------------------\n" +
+                "| ID do Agendamento: " + id +
+                "\n| Cliente: " + cliente.getNome() +
+                "\n| Cabeleireiro: " + cabeleireiro.getNome() +
+                "\n| Data/Hora: " + dataHora +
+                "\n| Status: " + status +
+                "\n| Preço Total: R$ " + String.format("%.2f", precoTotal);
     }
 }
