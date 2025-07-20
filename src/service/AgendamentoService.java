@@ -18,6 +18,7 @@ import model.Cabeleireiro;
 import model.Cliente;
 import model.Procedimento;
 import model.StatusAgendamento;
+import util.Entradas;
 
 public class AgendamentoService {
 
@@ -25,6 +26,7 @@ public class AgendamentoService {
     private ClienteDAO clienteDAO = new ClienteDAO();
     private CabeleireiroDAO cabeleireiroDAO = new CabeleireiroDAO();
     private ProcedimentoDAO procedimentoDAO = new ProcedimentoDAO();
+    private Entradas entradas = new Entradas();
 
     private static final double DESCONTO_DE_ANIVERSARIO = 0.20;
 
@@ -52,7 +54,7 @@ public class AgendamentoService {
             return null;
         }
 
-        if (!verificarDisponibilidadeCabeleireiro(cabeleireiro, dataHoraAgendamento)) {
+        if (!ehDisponivel(cabeleireiro, dataHoraAgendamento)) {
             System.err.println("Erro: O cabeleireiro não está disponível no dia ou horário especificado.");
             return null;
         }
@@ -109,7 +111,7 @@ public class AgendamentoService {
         }
 
         Cabeleireiro cabeleireiro = agendamentoAtual.getCabeleireiro();
-        if (!verificarDisponibilidadeCabeleireiro(cabeleireiro, novaDataHora)) {
+        if (!ehDisponivel(cabeleireiro, novaDataHora)) {
             System.err.println("Erro: O cabeleireiro não está disponível no novo dia/horário solicitado.");
             return null;
         }
@@ -147,11 +149,11 @@ public class AgendamentoService {
         return agendamentoDAO.atualizarStatus(idAgendamento, StatusAgendamento.CANCELADO);
     }
 
-    public List<Agendamento> listarAgendamentosPorCliente(int idCliente) {
+    public List<Agendamento> consultarHistoricoDoCliente(int idCliente) {
         return agendamentoDAO.listarPorCliente(idCliente);
     }
 
-    public List<Agendamento> listarAgendamentosPorCabeleireiro(int idCabeleireiro) {
+    public List<Agendamento> consultarHistoricoDoCabeleireiro(int idCabeleireiro) {
         return agendamentoDAO.listarPorCabeleireiro(idCabeleireiro);
     }
 
@@ -160,7 +162,7 @@ public class AgendamentoService {
     }
 
     private LocalDateTime calcularProximaDataHora(String diaDaSemana, LocalTime horario) {
-        DayOfWeek diaDesejado = converterStringParaDayOfWeek(diaDaSemana);
+        DayOfWeek diaDesejado = entradas.converterStringParaDayOfWeek(diaDaSemana);
         if (diaDesejado == null)
             return null;
         LocalDate hoje = LocalDate.now();
@@ -168,8 +170,8 @@ public class AgendamentoService {
         return LocalDateTime.of(proximaData, horario);
     }
 
-    private boolean verificarDisponibilidadeCabeleireiro(Cabeleireiro cabeleireiro, LocalDateTime dataHora) {
-        String diaDaSemana = converterDayOfWeekParaString(dataHora.getDayOfWeek());
+    private boolean ehDisponivel(Cabeleireiro cabeleireiro, LocalDateTime dataHora) {
+        String diaDaSemana = entradas.converterDayOfWeekParaString(dataHora.getDayOfWeek());
         if (diaDaSemana == null)
             return false;
 
@@ -207,45 +209,4 @@ public class AgendamentoService {
         return todosOsHorarios;
     }
 
-    private DayOfWeek converterStringParaDayOfWeek(String dia) {
-        switch (dia.toUpperCase()) {
-            case "SEGUNDA":
-                return DayOfWeek.MONDAY;
-            case "TERCA":
-                return DayOfWeek.TUESDAY;
-            case "QUARTA":
-                return DayOfWeek.WEDNESDAY;
-            case "QUINTA":
-                return DayOfWeek.THURSDAY;
-            case "SEXTA":
-                return DayOfWeek.FRIDAY;
-            case "SABADO":
-                return DayOfWeek.SATURDAY;
-            case "DOMINGO":
-                return DayOfWeek.SUNDAY;
-            default:
-                return null;
-        }
-    }
-
-    private String converterDayOfWeekParaString(DayOfWeek dia) {
-        switch (dia) {
-            case MONDAY:
-                return "SEGUNDA";
-            case TUESDAY:
-                return "TERCA";
-            case WEDNESDAY:
-                return "QUARTA";
-            case THURSDAY:
-                return "QUINTA";
-            case FRIDAY:
-                return "SEXTA";
-            case SATURDAY:
-                return "SABADO";
-            case SUNDAY:
-                return "DOMINGO";
-            default:
-                return null;
-        }
-    }
 }

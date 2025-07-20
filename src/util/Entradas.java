@@ -1,5 +1,6 @@
 package util;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -51,7 +52,7 @@ public class Entradas {
         String entrada;
 
         while (true) {
-            System.out.print(texto + ": ");
+            System.out.print(texto);
             entrada = scanner.nextLine().trim();
 
             if (entrada.isEmpty()) {
@@ -330,6 +331,48 @@ public class Entradas {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public DayOfWeek converterStringParaDayOfWeek(String dia) {
+        switch (dia.toUpperCase()) {
+            case "SEGUNDA":
+                return DayOfWeek.MONDAY;
+            case "TERCA":
+                return DayOfWeek.TUESDAY;
+            case "QUARTA":
+                return DayOfWeek.WEDNESDAY;
+            case "QUINTA":
+                return DayOfWeek.THURSDAY;
+            case "SEXTA":
+                return DayOfWeek.FRIDAY;
+            case "SABADO":
+                return DayOfWeek.SATURDAY;
+            case "DOMINGO":
+                return DayOfWeek.SUNDAY;
+            default:
+                return null;
+        }
+    }
+
+    public String converterDayOfWeekParaString(DayOfWeek dia) {
+        switch (dia) {
+            case MONDAY:
+                return "SEGUNDA";
+            case TUESDAY:
+                return "TERCA";
+            case WEDNESDAY:
+                return "QUARTA";
+            case THURSDAY:
+                return "QUINTA";
+            case FRIDAY:
+                return "SEXTA";
+            case SATURDAY:
+                return "SABADO";
+            case SUNDAY:
+                return "DOMINGO";
+            default:
+                return null;
         }
     }
 

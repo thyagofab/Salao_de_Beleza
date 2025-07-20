@@ -214,7 +214,7 @@ public class AgendamentoView {
     }
 
     private void HistoricoCliente(Cliente clienteLogado) {
-        List<Agendamento> agendamentos = servicoAgendamento.listarAgendamentosPorCliente(clienteLogado.getIdUsuario());
+        List<Agendamento> agendamentos = servicoAgendamento.consultarHistoricoDoCliente(clienteLogado.getIdUsuario());
         if (agendamentos.isEmpty()) {
             System.out.println("Você não possui agendamentos.");
             return;
@@ -226,8 +226,7 @@ public class AgendamentoView {
     }
 
     private void exibirAgendaDoCabeleireiro(Cabeleireiro cabeleireiroLogado) {
-        List<Agendamento> agendamentos = servicoAgendamento
-                .listarAgendamentosPorCabeleireiro(cabeleireiroLogado.getIdUsuario());
+        List<Agendamento> agendamentos = servicoAgendamento.consultarHistoricoDoCabeleireiro(cabeleireiroLogado.getIdUsuario());
         if (agendamentos.isEmpty()) {
             System.out.println("Você não possui agendamentos na sua agenda.");
             return;

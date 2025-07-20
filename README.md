@@ -53,11 +53,10 @@ thyagofab-salao_de_beleza/
 
 ## Funcionalidades
 - Cadastro e gerenciamento de **Clientes**, **Cabeleireiros** e **Procedimentos**
-- Agendamento de horários entre clientes e cabeleireiros
+- Agendamento de horários entre **Clientes** e **Cabeleireiros**
 - Controle de **status dos agendamentos** (ex: agendado, reagendado, concluído, cancelado)
 - **Clientes** podem optar por adicionar mais de um procedimento ao agendamento
 - **Clientes** e **Cabeleireiros** podem visualizar seus históricos de agendamentos
-- **Clientes** podem avaliar o cabeleireiro após o procedimento ser concluído
 - Atualização automática da última visita feita pelo **Cliente**
 - Cálculo do valor total do agendamento com base nos procedimentos selecionados pelo **Cliente**
 - Sistema de **login de usuário** que redireciona para o menu principal de acordo com o tipo de usuário (**Cliente** ou **Cabeleireiro**)
@@ -74,6 +73,20 @@ thyagofab-salao_de_beleza/
    git clone https://github.com/thyagofab/salao_de_beleza.git
     ```  
 2. **Abra o projeto em sua IDE Java**
+
+3. **Ajuste as dependências do Banco de dados**:
+    - Se estiver utilizando o Visual Studio Code, siga as instruções abaixo para ajustar as dependências do banco de dados SQLite:
+        - Dentro da pasta `.vscode` no projeto, crie um arquivo `settings.json` (se já não existir).
+        - Adicione o seguinte conteúdo ao arquivo `settings.json` com as versões correspondentes dos arquivos JAR presentes na pasta `lib` do projeto:
+
+        ```json
+        {
+            "java.project.referencedLibraries": [
+            "src/lib/sqlite-jdbc-3.45.2.0.jar",
+            "src/lib/slf4j-api-2.0.12.jar"
+            ]
+        }
+        ```
 
 3. **Compile e execute a classe `Main.java`**.
 

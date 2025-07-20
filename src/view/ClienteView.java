@@ -29,7 +29,7 @@ public class ClienteView {
             System.out.println("| [6] VOLTAR AO MENU PRINCIPAL   |");
             System.out.println("==================================");
 
-            opcao = Entradas.lerNumero("Escolha uma opção ");
+            opcao = Entradas.lerNumero("Escolha uma opção: ");
 
             switch (opcao) {
                 case 1:
