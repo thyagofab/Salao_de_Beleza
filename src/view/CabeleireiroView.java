@@ -38,7 +38,6 @@ public class CabeleireiroView {
             System.out.println("| [6] GERENCIAR AGENDAMENTOS          |");
             System.out.println("| [7] VOLTAR AO MENU PRINCIPAL        |");
             System.out.println("=======================================");
-            System.out.print("Escolha uma opção: ");
 
             opcao = Entradas.lerNumero("Escolha uma opção: ");
 
